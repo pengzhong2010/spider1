@@ -33,7 +33,8 @@ DOWNLOAD_DELAY = 0.01
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+COOKIES_ENABLED = True
+COOKIES_DEBUG = True
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -52,9 +53,15 @@ DOWNLOAD_DELAY = 0.01
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware' : 700,
+    'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware' :580,
+    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware' :600,
+    # 'scrapy.contrib.downloadermiddleware.redirect.MetaRefreshMiddleware': 580,
+    # 'scrapy.contrib.downloadermiddleware.redirect.RedirectMiddleware': 600,
+    # 'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware': 700,
 #    'weibo.middlewares.MyCustomDownloaderMiddleware': 543,
-#}
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -88,3 +95,11 @@ DOWNLOAD_DELAY = 0.01
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+# LOG_ENABLED = True
+# LOG_ENCODING = 'utf-8'
+# LOG_FILE = 'log/log.txt'
+# LOG_LEVEL = 'DEBUG'
+REDIRECT_ENABLED = True
+REDIRECT_MAX_TIMES = 20
+METAREFRESH_ENABLED = True
+REDIRECT_MAX_METAREFRESH_DELAY = 100
