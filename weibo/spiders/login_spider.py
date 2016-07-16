@@ -12,6 +12,7 @@ class LoginSpider(scrapy.spiders.Spider):
     surl = 'http://m.weibo.cn'
     page_search_url=''
     start_page=1
+    run_page=0
     #
     # def parse(self, response):
     #     print 'body'
@@ -118,20 +119,19 @@ class LoginSpider(scrapy.spiders.Spider):
             str2 = m1.groups()[0]
             print str2
             self.page_search_url='http://m.weibo.cn/page/json?containerid='+str2+'_-_FANS&page='
-            search_url_tmp=self.page_search_url+str(self.start_page)
+            self.run_page=self.start_page
+
+            search_url_tmp=self.page_search_url+str(self.run_page)
             return [scrapy.Request(url=search_url_tmp,
                                    meta={'cookiejar': response.meta['cookiejar']},
                                    callback=self.get_page_info
                                    )]
 
     def get_page_info(self,response):
-        print 'url'
-        print response.url
-        print 'body'
-        print response.body
-        print 'headers'
-        print response.headers
-        print 'meta'
-        print response.meta
-
+        
+        # search_url_tmp = self.page_search_url + str(self.start_page)
+        # return [scrapy.Request(url=search_url_tmp,
+        #                        meta={'cookiejar': response.meta['cookiejar']},
+        #                        callback=self.get_page_info
+        #                        )]
 
