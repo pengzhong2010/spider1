@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import scrapy
 # from scrapy.selector import HtmlXPathSelector
 from scrapy.selector import Selector
@@ -6,19 +7,24 @@ import re
 import time
 
 
-class LoginSpider(scrapy.spiders.Spider):
-    name = "login"
+class DetailSpider(scrapy.spiders.Spider):
+    name = "detail"
     allowed_domains = ['weibo.com','weibo.cn','sina.com.cn']
     # start_urls=['http://m.weibo.cn']
     surl = 'http://m.weibo.cn'
-    page_search_url=''
-    start_page=1
-    run_page=0
+    uid_search_home_url='http://m.weibo.cn/u/'
+    uid_search_info_url='http://m.weibo.cn/users/'
+    uid_catching=0
+
+    uid_info={}
+    list_all=[]
+    listkey=0
+    list_len=0
     num_tmp=0
     str_tmp=''
-    uid_filename='uid1'
-    resjson_filename='weibo5'
-    resjson_error_filename='error'
+    uid_filename='uid1_search'
+    resjson_filename='weibo6'
+    resjson_error_filename='error_detail'
     #
     # def parse(self, response):
     #     print 'body'
@@ -39,6 +45,8 @@ class LoginSpider(scrapy.spiders.Spider):
         'User-Agent':'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
     }
     def start_requests(self):
+        self.list_all=self.get_uid_list()
+        self.list_len=len(self.list_all)
         return [scrapy.Request(url=self.surl,meta={'cookiejar':0},callback=self.see_home
                                )]
 
@@ -93,7 +101,7 @@ class LoginSpider(scrapy.spiders.Spider):
                             callback=self.after_login)]
 
     def after_login(self,response):
-
+        list_all=self.get_uid_list()
         # print 'url'
         # print response.url
         # print 'body'
@@ -103,10 +111,52 @@ class LoginSpider(scrapy.spiders.Spider):
         # print 'meta'
         # print response.meta
 
-        return [scrapy.Request(url='http://m.weibo.cn/home/me?format=cards', meta={'cookiejar': response.meta['cookiejar']},
-                               callback=self.see_me
-                               )]
-    def see_me(self,response):
+        #check res login
+
+        if self.uid_catching:
+            # print 'url'
+            # print response.url
+            # print 'body'
+            # print response.body
+            # print 'headers'
+            # print response.headers
+            # print 'meta'
+            # print response.meta
+            if response.body:
+                str1 = response.body
+                str1 = str(str1)
+                m1 = re.match(
+                    r'.*(\<span\>详细资料\<\/span\>.*)\<span id=\"tit_nav\"\>\<\/span\>\<\/nav\>\<section id=\"E_blueV_Company\" class=\"input-info-page\"\>.*',
+                    str1)
+                if m1:
+                    str2 = m1.groups()[0]
+
+
+                    with open('uid_info3', 'ab') as f:
+                        f.write(str2)
+
+                self.uid_catching=0
+
+
+        if not self.uid_catching:
+            self.uid_info={}
+
+            key_tmp=self.listkey
+            if key_tmp<self.list_len:
+
+                uid_tmp=self.list_all[key_tmp]
+            else:
+                uid_tmp=0
+            self.listkey=self.listkey+1
+
+            if uid_tmp:
+                self.uid_info['uid']=uid_tmp
+
+                search_url_tmp=self.uid_search_home_url+str(uid_tmp)
+                return [scrapy.Request(url=search_url_tmp, meta={'cookiejar': response.meta['cookiejar']},
+                                       callback=self.uid_home
+                                       )]
+    def uid_home(self,response):
 
         # print 'url'
         # print response.url
@@ -116,81 +166,34 @@ class LoginSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
-        # with open('me', 'ab') as f:
-        #     f.write(response.body)
-        str1 = response.body
-        str1 = str(str1)
-        m1 = re.match(r'.*\{\"title\":\"\\u7c89\\u4e1d\",.*\/page.*containerid=([\d]+)_-_FANS.*', str1)
+        uid_detail_str1=response.body
+        uid_detail_str1=str(response.body)
+
+        m1 = re.match(r'.*window\.\$render_data = (.*});.*', uid_detail_str1)
         if m1:
-            str2 = m1.groups()[0]
-            print str2
-            self.page_search_url='http://m.weibo.cn/page/json?containerid='+str2+'_-_FANS&page='
-            self.run_page=self.start_page
+            str1 = m1.groups()[0]
+            str2 = str1.replace("\'", '\"')
+            with open('uid_home3', 'ab') as f:
+                f.write(str2)
+            self.uid_info['home']=str2
 
-            search_url_tmp=self.page_search_url+str(self.run_page)
-            return [scrapy.Request(url=search_url_tmp,
-                                   meta={'cookiejar': response.meta['cookiejar']},
-                                   callback=self.get_page_info
-                                   )]
+        if self.uid_info['uid']:
+            self.uid_catching=1
+            search_url_tmp = self.uid_search_info_url + str(self.uid_info['uid']) +'/?'
+            return [scrapy.Request(url=search_url_tmp, meta={'cookiejar': response.meta['cookiejar']},
+                                   callback=self.after_login
+                               )]
 
-    def get_page_info(self,response):
-        next_flag = 0
-        error_flag = 0
-        str1 = response.body
-        str1 = str(str1)
-        m1 = re.match(r'.*(\"ok\":1,).*', str1)
-        if not m1:
-            error_flag = 1
-            # print m1.groups()
+    def get_uid_list(self):
+        # f = open('D:\py\weibo\uid1')
+        # str1 = f.read()
+        #
+        # list1 = str1.split("\n")
+        # return list1
 
-        m2 = re.match(r'.*(\"count\":[\d]+,).*', str1)
-        if m2:
-            next_flag = 1
-            # print m2.groups()
+        list1=[5708787172,5874463817,1333564335,5147470389]
+        return list1
 
-        m3 = re.findall(r'\"id\":([\d]+),', str1)
-        if m3:
-            # print 'm3'
-            # print m3
-            for i in m3:
-                i_tmp_str = str(i) + "\r\n"
-                with open(self.uid_filename, 'ab') as f:
-                    f.write(i_tmp_str)
-
-        str1 = response.url + "---" + "\r\n" + str1 + "\r\n"
-
-        self.num_tmp = self.num_tmp + 1
-        self.str_tmp = self.str_tmp + str1
-        if self.num_tmp > 9:
-            # filename = 'weibo4'
-            time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-            self.str_tmp = time_now + "----" + "\r\n" + self.str_tmp
-            with open(self.resjson_filename, 'ab') as f:
-                f.write(self.str_tmp)
-            self.str_tmp = ''
-            self.num_tmp = 0
-
-        if error_flag:
-            time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-            str_error = time_now + "----" + "\r\n" + str1
-            with open(self.resjson_error_filename, 'ab') as f:
-                f.write(str_error)
-
-        if not next_flag:
-            time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-            self.str_tmp = time_now + "----" + "\r\n" + self.str_tmp
-            self.str_tmp = self.str_tmp + 'finished' + '-----' + "\r\n"
-            with open(self.resjson_filename, 'ab') as f:
-                f.write(self.str_tmp)
-            self.str_tmp = ''
-            self.num_tmp = 0
-        else:
-            self.run_page=self.run_page+1
-            search_url_tmp = self.page_search_url + str(self.run_page)
-            return [scrapy.Request(url=search_url_tmp,
-                                   meta={'cookiejar': response.meta['cookiejar']},
-                                   callback=self.get_page_info
-                                   )]
 
 
 
