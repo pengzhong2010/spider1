@@ -1,0 +1,230 @@
+# -*- coding:utf-8 -*-
+import scrapy
+from scrapy.selector import HtmlXPathSelector
+from scrapy.selector import Selector
+# from scrapy.http import HtmlResponse
+import re
+import time
+
+from rec_driver import *
+# from pyredis import RedisKv
+
+from pymysql import PyMysql
+
+
+#surl
+#start_search_page,end_search_page
+#url_fans
+#my_cookies
+
+class WebpcSpider(scrapy.spiders.Spider):
+    name = "webpc"
+    allowed_domains = ['weibo.com','weibo.cn','sina.com.cn']
+    # start_urls=['http://m.weibo.cn']
+    surl = 'http://weibo.com/5946421838/fans?from=100505&wvr=6&mod=headfans&current=fans#place'
+    page_search_url=''
+    start_page=1
+    run_page=0
+    start_search_page=0
+    end_search_page=3
+    login_uid=0
+    uid_tmp_list=[]
+    uid_write_num=99
+    uid_num_tmp=0
+    uid_str_tmp=''
+    write_num=99
+    num_tmp=0
+    str_tmp=''
+    uid_filename='uid186'
+    resjson_filename='weibo186'
+    resjson_error_filename='error186'
+
+    mysql_con=''
+
+    my_headers={
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Encoding':'gzip,deflate,sdch',
+        'Accept-Language':'zh-CN,zh;q=0.8',
+        # 'Cache-Control':'no-cache',
+        'Connection':'keep-alive',
+        'Host':'weibo.com',
+        # 'Pragma':'no-cache',
+        'Referer':'http://weibo.com/p/1005055946421838/home?from=page_100505&mod=TAB&is_all=1',
+        'Upgrade-Insecure-Requests':'1',
+        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
+    }
+
+
+
+    my_cookies = {
+        'YF-Page-G0':'b98b45d9bba85e843a07e69c0880151a',
+        'YF-Ugrow-G0':'169004153682ef91866609488943c77f',
+        'SINAGLOBAL': '7696783314376.881.1468901454104',
+        '_s_tentry': '-',
+        'Apache': '7696783314376.881.1468901454104',
+        'ULV': '1468901454110:1:1:1:7696783314376.881.1468901454104:',
+        'SUHB': '0Yhh8PX-cgXRYt',
+        'SSOLoginState': '1468901538',
+        'un': '18639919430',
+        'wvr': '6',
+        'ALF': '1500437537',
+        'SUBP': '0033WrSXqPxfM725Ws9jqgMF55529P9D9WWao3w_lZAsY9plMij8OfY95JpX5K2hUgL.Fo-4ShqXeo2Re0n2dJLoIfQLxKnL122L1KzLxK-LBKBL12qLxKqL1-qLBoeLxK.LB.2LBo-LxK-L12eL1h-LxK-LBonL1heLxKBLBonL1h2LxKBLBonL12BLxK-L122LBK5LxKMLBoeL1Kqt',
+        'SCF':'Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYmpLP3BmRFjjhxgsl40xnGlI_A0V9O4pA1MUshtFpxBj4.',
+        'SUB':'_2A256idjyDeTxGeNH71QV8i_EyDSIHXVZ_006rDV8PUNbmtBeLRjjkW9lYEAUtjMyFqIhHCol2n_DBv-WeQ..',
+        'wb_bub_hot_5946421838':'1',
+        'WBStore':'8ca40a3ef06ad7b2|undefined',
+    }
+
+    def start_requests(self):
+
+        self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD, conf1.MYSQL_DG_DB)
+
+        return [scrapy.Request(url=self.surl , meta={'cookiejar':0} , cookies=self.my_cookies , callback=self.see_home
+                               )]
+
+    def see_home(self,response):
+
+        # print 'url'
+        # print response.url
+        # print 'body'
+        # print response.body
+        # print 'headers'
+        # print response.headers
+        # print 'meta'
+        # print response.meta
+        #
+        # with open('webpage', 'ab') as f:
+        #     f.write(response.body)
+
+        # response.xpath('')
+        url_tmp = response.url
+        url_tmp = str(url_tmp)
+        m1 = re.match(r'.*\/(\d+)\/.*', url_tmp)
+        if m1:
+            self.login_uid = m1.groups()[0]
+
+            url_fans='http://weibo.com/' + str(self.login_uid) + '/fans?rightmod=1&wvr=6'
+            print "next_url"
+            print url_fans
+
+            return [scrapy.Request(url=url_fans, meta={'cookiejar': 0},  callback=self.see_list
+                                   )]
+
+
+    def see_list(self,response):
+
+        # print 'url'
+        # print response.url
+        # print 'body'
+        # print response.body
+        # print 'headers'
+        # print response.headers
+        # print 'meta'
+        # print response.meta
+        #
+        # with open('fans_list', 'ab') as f:
+        #     f.write(response.body)
+
+        str1=response.body
+        # ul = response.xpath('//ul[contains(@class, "follow_list")]').extract()
+        # print "ul"
+        # print ul
+        str1=str(str1)
+        str2 = str1.replace("\n", "")
+        str2 = str2.replace("\\n", "")
+        m1 = re.match(r'.*\<!--粉丝列表--\>(.*)', str2)
+        if m1:
+            str2 = m1.groups()[0]
+            # with open('ul', 'wb') as f:
+            #     f.write(str2)
+            # ul = Selector(text=str2).xpath('//ul[contains(@class, "follow_list")]').extract()
+            uid_dict_tmp={}
+            m1 = re.findall(r'\/u\\/([\d]+)\?', str2)
+            if m1:
+                for i in m1:
+
+                    uid_dict_tmp[i]=1
+
+
+            self.uid_tmp_list = uid_dict_tmp.keys()
+            self.insert_uid()
+            self.uid_tmp_list=[]
+
+
+            m2 = re.match(r'.*page next S_txt1 S_line1\\\" href=\\\"([^\"]*)\".*', str2)
+            if m2:
+                str3=m2.groups()[0]
+                str3=str3.replace("\\","")
+
+                next_url='http://weibo.com'+str3
+
+                print "next_url"
+                print next_url
+
+                m_end = re.match(r'.*page=([\d]+).*', next_url)
+                if m_end:
+                    next_page_tmp = m_end.groups()[0]
+
+                    next_page_tmp=int(next_page_tmp)
+
+                    if next_page_tmp>self.end_search_page:
+                        
+                        return
+                    if next_page_tmp<self.start_search_page:
+
+                        return
+                else:
+                    # return
+                    pass
+
+
+                time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
+                run_page_str=time_now + '---' + response.url + "\r\n"
+                with open('run_page', 'ab') as f:
+                    f.write(run_page_str)
+                time.sleep(0.1)
+                return [scrapy.Request(url=next_url, meta={'cookiejar': 0}, dont_filter=True,callback=self.see_list
+                                       )]
+            else:
+                time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
+                run_error_str = time_now + '---' + response.url + "---" + "out 1" + "\r\n"
+                with open('run_page_error', 'ab') as f:
+                    f.write(run_error_str)
+                return [scrapy.Request(url=response.url, meta={'cookiejar': 0},dont_filter=True, callback=self.see_list
+                                       )]
+
+        else:
+            time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
+            run_error_str = time_now + '---' + response.url + "---" + "out 2" + "\r\n"
+            with open('run_page_error', 'ab') as f:
+                f.write(run_error_str)
+            time.sleep(0.1)
+            return [scrapy.Request(url=response.url, meta={'cookiejar': 0},dont_filter=True, callback=self.see_list
+                                   )]
+
+
+
+    def see_other_list(self,response):
+
+        pass
+
+
+    def insert_uid(self):
+        if not self.uid_tmp_list:
+            return
+        t_tuple = []
+        for i in self.uid_tmp_list:
+            i=int(i)
+            t_tuple_tmp = tuple([i])
+            t_tuple.append(t_tuple_tmp)
+
+        sql = """
+            insert into weibo_fensi_info (
+                `uid`
+            ) values (%s)
+
+        """
+        ret = self.mysql_con.excute(sql, "many", t_tuple)
+
+        print ret
+

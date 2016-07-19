@@ -3,6 +3,10 @@ import scrapy
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 
+from rec_driver import *
+# from pyredis import RedisKv
+
+from pymysql import PyMysql
 
 class TestSpider(scrapy.spiders.Spider):
     name = "test"
@@ -24,5 +28,42 @@ class TestSpider(scrapy.spiders.Spider):
         # print 'headers'
         # print response.headers
         # print 'meta'
-        with open('one_case', 'ab') as f:
-            f.write(response.body)
+        # with open('one_case', 'ab') as f:
+        #     f.write(response.body)
+
+        mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD, conf1.MYSQL_DG_DB)
+
+        # sql = """
+        # select uid from weibo_fans_origin where status=0 order by id limit 100
+        # """
+        # ret = mysql_con.select(sql)
+
+        sql = "select id from weibo_fensi_info_id where id = %s " % 1237
+        ret = mysql_con.select(sql,'one')
+        # sql = "select article_infoid, date_format(article_time, \"%%Y%%m%%d %%H\"), thum_url, small_thum_url from article_info where article_infoid = %d" % article_infoid
+        # article_tuple = self._pymysql.select(sql, 'one')
+        # t_tuple = tuple(["xx", "oo", 3190353011])
+        # sql = """
+        #             update weibo_fans_origin set info1= %s ,info2= %s ,`status`=1 where uid= %s
+        #
+        #         """
+        # ret = mysql_con.excute(sql, "one", t_tuple)
+        # t_tuple1 = tuple([2325,'123dd','123ccc',1])
+        # t_tuple2 = tuple([2324, '123dd1', '123ccc1', 1])
+        # t_tuple=[t_tuple1,t_tuple2]
+        #
+        # sql = """
+        #         insert into weibo_fans_origin (
+        #             `uid`,`info1`,`info2`,`status`
+        #         ) values (%s,%s,%s,%s)
+        #
+        #     """
+        # ret = mysql_con.excute(sql, "many", t_tuple)
+
+        print ret
+
+        # for i in ret:
+        #     print i
+        #     print i.get("id")
+        #     print i.get("uid")
+        #     print i.get("catch_status")

@@ -5,6 +5,11 @@ from scrapy.http import HtmlResponse
 import re
 import time
 
+from rec_driver import *
+# from pyredis import RedisKv
+
+from pymysql import PyMysql
+
 
 class LoginSpider(scrapy.spiders.Spider):
     name = "login"
@@ -14,11 +19,18 @@ class LoginSpider(scrapy.spiders.Spider):
     page_search_url=''
     start_page=1
     run_page=0
+    uid_tmp_list=[]
+    uid_write_num=99
+    uid_num_tmp=0
+    uid_str_tmp=''
+    write_num=99
     num_tmp=0
     str_tmp=''
-    uid_filename='uid1'
-    resjson_filename='weibo5'
-    resjson_error_filename='error'
+    uid_filename='uid186'
+    resjson_filename='weibo186'
+    resjson_error_filename='error186'
+
+    mysql_con=''
     #
     # def parse(self, response):
     #     print 'body'
@@ -39,6 +51,9 @@ class LoginSpider(scrapy.spiders.Spider):
         'User-Agent':'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
     }
     def start_requests(self):
+
+        self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD, conf1.MYSQL_DG_DB)
+
         return [scrapy.Request(url=self.surl,meta={'cookiejar':0},callback=self.see_home
                                )]
 
@@ -72,25 +87,46 @@ class LoginSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
+
+        # return [scrapy.FormRequest(url="https://passport.weibo.cn/sso/login",
+        #                            method="POST",
+        #                     formdata={
+        #                         'username': 'hongguangui@gmail.com',
+        #                         'password':'Hell0@123',
+        #                         'savestate':'1',
+        #                         'ec':'0',
+        #                         'pagerefer':'',
+        #                         'entry':'mweibo',
+        #                         'wentry':'',
+        #                         'loginfrom':'',
+        #                         'client_id':'',
+        #                         'code': '',
+        #                         'qq': '',
+        #                         'hff': '',
+        #                         'hfp': ''
+        #                     },
+        #                     meta={'cookiejar': response.meta['cookiejar']},
+        #                     callback=self.after_login)]
+
         return [scrapy.FormRequest(url="https://passport.weibo.cn/sso/login",
-                                   method="POST",
-                            formdata={
-                                'username': 'hongguangui@gmail.com',
-                                'password':'Hell0@123',
-                                'savestate':'1',
-                                'ec':'0',
-                                'pagerefer':'',
-                                'entry':'mweibo',
-                                'wentry':'',
-                                'loginfrom':'',
-                                'client_id':'',
-                                'code': '',
-                                'qq': '',
-                                'hff': '',
-                                'hfp': ''
-                            },
-                            meta={'cookiejar': response.meta['cookiejar']},
-                            callback=self.after_login)]
+                               method="POST",
+                               formdata={
+                                   'username': '18639919430',
+                                   'password': 'aaa333',
+                                   'savestate': '1',
+                                   'ec': '0',
+                                   'pagerefer': '',
+                                   'entry': 'mweibo',
+                                   'wentry': '',
+                                   'loginfrom': '',
+                                   'client_id': '',
+                                   'code': '',
+                                   'qq': '',
+                                   'hff': '',
+                                   'hfp': ''
+                               },
+                               meta={'cookiejar': response.meta['cookiejar']},
+                               callback=self.after_login)]
 
     def after_login(self,response):
 
@@ -153,15 +189,28 @@ class LoginSpider(scrapy.spiders.Spider):
             # print 'm3'
             # print m3
             for i in m3:
+                self.uid_tmp_list.append(int(i))
                 i_tmp_str = str(i) + "\r\n"
-                with open(self.uid_filename, 'ab') as f:
-                    f.write(i_tmp_str)
+                self.uid_num_tmp = self.uid_num_tmp + 1
+                self.uid_str_tmp = self.uid_str_tmp + i_tmp_str
+                if self.uid_num_tmp > self.uid_write_num:
+
+                    #add db
+                    self.insert_uid()
+
+                    with open(self.uid_filename, 'ab') as f:
+                        f.write(self.uid_str_tmp)
+                    self.uid_str_tmp = ''
+                    self.uid_num_tmp = 0
+                    self.uid_tmp_list=[]
+                # with open(self.uid_filename, 'ab') as f:
+                #     f.write(i_tmp_str)
 
         str1 = response.url + "---" + "\r\n" + str1 + "\r\n"
 
         self.num_tmp = self.num_tmp + 1
         self.str_tmp = self.str_tmp + str1
-        if self.num_tmp > 9:
+        if self.num_tmp > self.write_num:
             # filename = 'weibo4'
             time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
             self.str_tmp = time_now + "----" + "\r\n" + self.str_tmp
@@ -184,6 +233,13 @@ class LoginSpider(scrapy.spiders.Spider):
                 f.write(self.str_tmp)
             self.str_tmp = ''
             self.num_tmp = 0
+
+            self.insert_uid()
+            with open(self.uid_filename, 'ab') as f:
+                f.write(self.uid_str_tmp)
+            self.uid_str_tmp = ''
+            self.uid_num_tmp = 0
+
         else:
             self.run_page=self.run_page+1
             search_url_tmp = self.page_search_url + str(self.run_page)
@@ -192,5 +248,23 @@ class LoginSpider(scrapy.spiders.Spider):
                                    callback=self.get_page_info
                                    )]
 
+
+    def insert_uid(self):
+        if not self.uid_tmp_list:
+            return
+        t_tuple=[]
+        for i in self.uid_tmp_list:
+            t_tuple_tmp = tuple([i])
+            t_tuple.append(t_tuple_tmp)
+
+        sql = """
+            insert into weibo_fensi_info (
+                `uid`
+            ) values (%s)
+
+        """
+        ret = self.mysql_con.excute(sql, "many", t_tuple)
+
+        print ret
 
 

@@ -22,15 +22,15 @@ NEWSPIDER_MODULE = 'weibo.spiders'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 16
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 1
+DOWNLOAD_DELAY = 0
 # The download delay setting will honor only one of:
-#CONCURRENT_REQUESTS_PER_DOMAIN = 16
-#CONCURRENT_REQUESTS_PER_IP = 16
+CONCURRENT_REQUESTS_PER_DOMAIN = 3
+CONCURRENT_REQUESTS_PER_IP = 3
 
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = True
@@ -57,6 +57,7 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.cookies.CookiesMiddleware' : 700,
     'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware' :580,
     'scrapy.downloadermiddlewares.redirect.RedirectMiddleware' :600,
+    'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
     # 'scrapy.contrib.downloadermiddleware.redirect.MetaRefreshMiddleware': 580,
     # 'scrapy.contrib.downloadermiddleware.redirect.RedirectMiddleware': 600,
     # 'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware': 700,
@@ -103,3 +104,5 @@ REDIRECT_ENABLED = True
 REDIRECT_MAX_TIMES = 20
 METAREFRESH_ENABLED = True
 REDIRECT_MAX_METAREFRESH_DELAY = 100
+
+DOWNLOAD_TIMEOUT = 10

@@ -6,6 +6,11 @@ from scrapy.http import HtmlResponse
 import re
 import time
 
+from rec_driver import *
+# from pyredis import RedisKv
+
+from pymysql import PyMysql
+
 
 class DetailSpider(scrapy.spiders.Spider):
     name = "detail"
@@ -16,6 +21,7 @@ class DetailSpider(scrapy.spiders.Spider):
     uid_search_info_url='http://m.weibo.cn/users/'
     uid_catching=0
 
+
     uid_info={}
     list_all=[]
     listkey=0
@@ -25,6 +31,8 @@ class DetailSpider(scrapy.spiders.Spider):
     uid_filename='uid1_search'
     resjson_filename='weibo6'
     resjson_error_filename='error_detail'
+
+    mysql_con = ''
     #
     # def parse(self, response):
     #     print 'body'
@@ -45,8 +53,12 @@ class DetailSpider(scrapy.spiders.Spider):
         'User-Agent':'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
     }
     def start_requests(self):
-        self.list_all=self.get_uid_list()
-        self.list_len=len(self.list_all)
+
+        self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
+                                 conf1.MYSQL_DG_DB)
+
+
+
         return [scrapy.Request(url=self.surl,meta={'cookiejar':0},callback=self.see_home
                                )]
 
@@ -58,12 +70,12 @@ class DetailSpider(scrapy.spiders.Spider):
         # print 'headers'
         # print response.headers
         # print 'meta'
-        print response.meta
-        print response.meta['cookiejar']
+        # print response.meta
+        # print response.meta['cookiejar']
 
         next_url = response.xpath('//a[contains(@class,"btn btnWhite")]//@href').extract()
-        print 'next_url'
-        print next_url[0]
+        # print 'next_url'
+        # print next_url[0]
 
         # print
 
@@ -101,7 +113,8 @@ class DetailSpider(scrapy.spiders.Spider):
                             callback=self.after_login)]
 
     def after_login(self,response):
-        list_all=self.get_uid_list()
+        # list_all=self.get_uid_list()
+
         # print 'url'
         # print response.url
         # print 'body'
@@ -110,7 +123,7 @@ class DetailSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
-
+        # return
         #check res login
 
         if self.uid_catching:
@@ -131,31 +144,49 @@ class DetailSpider(scrapy.spiders.Spider):
                 if m1:
                     str2 = m1.groups()[0]
 
+                    self.uid_info['info2'] = str2
+                    #update db
+                    self.update_uid_data()
 
-                    with open('uid_info3', 'ab') as f:
-                        f.write(str2)
+                    # str2_tmp=str2 + "\r\n"
+                    # with open('info2log', 'ab') as f:
+                    #     f.write(str2_tmp)
 
                 self.uid_catching=0
+                time.sleep(10)
+                # return
 
 
         if not self.uid_catching:
             self.uid_info={}
 
-            key_tmp=self.listkey
-            if key_tmp<self.list_len:
+            # self.list_all = self.get_uid_list()
+            # self.list_len = len(self.list_all)
+            #
+            # key_tmp=self.listkey
+            # if key_tmp<self.list_len:
+            #
+            #     uid_tmp=self.list_all[key_tmp]
+            # else:
+            #     uid_tmp=0
+            # self.listkey=self.listkey+1
+            self.get_uid_list()
+            # print "uid_tmp"
+            # print uid_tmp
+            # return
+            if self.uid_info:
+                # self.uid_info['uid']=uid_tmp
+                uid_tmp=self.uid_info.get("uid")
+                if uid_tmp:
 
-                uid_tmp=self.list_all[key_tmp]
-            else:
-                uid_tmp=0
-            self.listkey=self.listkey+1
+                    search_url_tmp=self.uid_search_home_url+str(uid_tmp)
+                    return [scrapy.Request(url=search_url_tmp, meta={'cookiejar': response.meta['cookiejar']},
+                                           callback=self.uid_home
+                                           )]
+                else:
+                    return self.after_login()
 
-            if uid_tmp:
-                self.uid_info['uid']=uid_tmp
 
-                search_url_tmp=self.uid_search_home_url+str(uid_tmp)
-                return [scrapy.Request(url=search_url_tmp, meta={'cookiejar': response.meta['cookiejar']},
-                                       callback=self.uid_home
-                                       )]
     def uid_home(self,response):
 
         # print 'url'
@@ -166,6 +197,8 @@ class DetailSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
+        # return
+
         uid_detail_str1=response.body
         uid_detail_str1=str(response.body)
 
@@ -173,11 +206,11 @@ class DetailSpider(scrapy.spiders.Spider):
         if m1:
             str1 = m1.groups()[0]
             str2 = str1.replace("\'", '\"')
-            with open('uid_home3', 'ab') as f:
-                f.write(str2)
-            self.uid_info['home']=str2
+            # with open('uid_home3', 'ab') as f:
+            #     f.write(str2)
+            self.uid_info['info1']=str2
 
-        if self.uid_info['uid']:
+        if self.uid_info.get("uid"):
             self.uid_catching=1
             search_url_tmp = self.uid_search_info_url + str(self.uid_info['uid']) +'/?'
             return [scrapy.Request(url=search_url_tmp, meta={'cookiejar': response.meta['cookiejar']},
@@ -190,9 +223,123 @@ class DetailSpider(scrapy.spiders.Spider):
         #
         # list1 = str1.split("\n")
         # return list1
+        if self.list_all:
 
-        list1=[5708787172,5874463817,1333564335,5147470389]
-        return list1
+        # self.list_all = self.get_uid_list()
+        # self.list_len = len(self.list_all)
+
+            key_tmp = self.listkey
+            if key_tmp < self.list_len:
+
+                uid_dict_tmp = self.list_all[key_tmp]
+                self.listkey = self.listkey + 1
+                self.uid_info=uid_dict_tmp
+                # return uid_tmp
+                return
+
+            else:
+                self.list_all=self.select_uid_list()
+                if self.list_all:
+                    self.list_len = len(self.list_all)
+                    self.listkey=0
+                    return self.get_uid_list()
+                else:
+                    return
+        else:
+            self.list_all = self.select_uid_list()
+            if self.list_all:
+                self.list_len = len(self.list_all)
+                self.listkey = 0
+                return self.get_uid_list()
+
+
+
+
+    def select_uid_list(self):
+
+        #select uid from weibo_fans_origin where status=0 order by id limit 100
+
+        sql = """
+        select a.id,a.uid from weibo_fensi_info a
+            left join weibo_fensi_info_id b
+            on a.id=b.id
+            where catch_status is null
+            order by a.id
+            limit 100
+        """
+        ret = self.mysql_con.select(sql)
+
+        if ret:
+            res_list_tmp=[]
+            for i in ret:
+                uid_list_tmp={}
+                uid_list_tmp["id"]=i.get("id")
+                uid_list_tmp["uid"] = i.get("uid")
+                # uid_list_tmp["catch_status"] = i.get("catch_status")
+                # uid_tmp = i.get("uid")
+
+                if uid_list_tmp.get("id"):
+                    uid_list_tmp["id"] = int(uid_list_tmp["id"])
+                    uid_list_tmp["uid"] = int(uid_list_tmp["uid"])
+
+                    res_list_tmp.append(uid_list_tmp)
+
+            return res_list_tmp
+        else:
+
+
+            #loop
+
+            time.sleep(10)
+            return self.select_uid_list()
+            # return
+
+    def update_uid_data(self):
+        data_update=self.uid_info
+        if data_update.get("id"):
+            pass
+
+
+
+
+
+
+
+
+
+
+
+            # if data_update.get("uid"):
+            #     sql = "select id from weibo_fensi_info_id where id = %s " % 1237
+            #     ret = self.mysql_con.select(sql, 'one')
+            #     if ret:
+            #         t_tuple = tuple([data_update.get("info1"), data_update.get("info2"), data_update.get("id")])
+            #         sql = """
+            #                     update weibo_fensi_info_id set info1= %s ,info2= %s ,`catch_status`=1 where id= %s
+            #
+            #                 """
+            #         ret = self.mysql_con.excute(sql, "one", t_tuple)
+            #     else:
+            #         t_tuple = tuple([data_update.get("id"), data_update.get("info1"), data_update.get("info2")])
+            #         sql = """
+            #                     insert into weibo_fensi_info_id (id,info1,info2,catch_status) values(%s,%s,%s,1)
+            #
+            #                 """
+            #         ret = self.mysql_con.excute(sql, "one", t_tuple)
+            #
+            #
+            #
+            #     t_tuple = tuple([ data_update.get("info1"), data_update.get("info2"), data_update.get("uid")])
+            #     sql = """
+            #             update weibo_fensi_info_id set info1= %s ,info2= %s ,`status`=1 where uid= %s
+            #
+            #         """
+            #     ret = self.mysql_con.excute(sql, "one", t_tuple)
+
+        return
+
+
+
 
 
 
