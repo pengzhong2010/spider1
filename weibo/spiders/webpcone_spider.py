@@ -210,12 +210,13 @@ class WebpconeSpider(scrapy.spiders.Spider):
                 return [scrapy.Request(url=next_url, meta={'cookiejar': 0}, dont_filter=True, callback=self.see_list
                                        )]
             else:
-                time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-                run_error_str = time_now + '---' + response.url + "---" + "out 1" + "\r\n"
-                with open('run_page_error', 'ab') as f:
-                    f.write(run_error_str)
-                return [scrapy.Request(url=response.url, meta={'cookiejar': 0}, dont_filter=True, callback=self.see_list
-                                       )]
+                # time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
+                # run_error_str = time_now + '---' + response.url + "---" + "out 1" + "\r\n"
+                # with open('run_page_error', 'ab') as f:
+                #     f.write(run_error_str)
+                # return [scrapy.Request(url=response.url, meta={'cookiejar': 0}, dont_filter=True, callback=self.see_list
+                #                        )]
+                return
 
         else:
             time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
