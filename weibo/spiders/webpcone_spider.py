@@ -197,10 +197,11 @@ class WebpconeSpider(scrapy.spiders.Spider):
 
                     if next_page_tmp > self.end_search_page:
                         return
-                    if next_page_tmp < self.start_search_page:
-                        replace_rule = re.compile("page=[\d]+")
-                        next_url = re.sub(replace_rule, 'page=' + str(self.start_search_page), next_url)
-                        pass
+                    if next_page_tmp < 1:
+                        return
+                        # replace_rule = re.compile("page=[\d]+")
+                        # next_url = re.sub(replace_rule, 'page=' + str(self.start_search_page), next_url)
+                        # pass
                 else:
                     # return
                     pass
