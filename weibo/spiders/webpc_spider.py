@@ -123,7 +123,7 @@ class WebpcSpider(scrapy.spiders.Spider):
             self.login_uid = m1.groups()[0]
 
             # url_fans='http://weibo.com/' + str(self.login_uid) + '/fans?rightmod=1&wvr=6'
-            url_fans='http://weibo.com/2714280233/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__103_page=144#Pl_Official_RelationFans__103'
+            url_fans='http://weibo.com/2714280233/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__103_page=120#Pl_Official_RelationFans__103'
             print "next_url"
             print url_fans
 
