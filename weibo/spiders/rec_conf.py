@@ -4,12 +4,12 @@
 IS_TABLE_ONLINE = False
 IS_REDIS_ONLINE = False
 
-MYSQL_URL = "rds77iv9etcjpi86u2895.mysql.rds.aliyuncs.com"
-MYSQL_USER = "data_grand"
-MYSQL_PASSWD = "23Knowledge"
+MYSQL_URL = "rdsq3zsso4e737w4gwjq.mysql.rds.aliyuncs.com"
+MYSQL_USER = "thirdparty"
+MYSQL_PASSWD = "Thirdparty123"
 MYSQL_PORT = 3306
 # MYSQL_PROMOTE_DB = "promote"
-MYSQL_DG_DB = "data_grand"
+MYSQL_DG_DB = "thirdparty"
 #
 # if IS_TABLE_ONLINE:  #online
 #     MYSQL_URL = "rdsq3zsso4e737w4gwjq.mysql.rds.aliyuncs.com"

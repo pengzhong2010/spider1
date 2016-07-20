@@ -21,7 +21,7 @@ class WebpcSpider(scrapy.spiders.Spider):
     name = "webpc"
     allowed_domains = ['weibo.com','weibo.cn','sina.com.cn']
     # start_urls=['http://m.weibo.cn']
-    surl = 'http://weibo.com/5946421838/fans?from=100505&wvr=6&mod=headfans&current=fans#place'
+    surl = 'http://weibo.com/2714280233/fans?from=100505&wvr=6&mod=headfans&current=fans#place'
     page_search_url=''
     start_page=1
     run_page=0
@@ -55,44 +55,43 @@ class WebpcSpider(scrapy.spiders.Spider):
     }
 
 
-# 'UOR=datagrand.com,widget.weibo.com,datagrand.com; ' \
-# 'SINAGLOBAL=7696783314376.881.1468901454104; ' \
-# 'wvr=6; ' \
-# 'wb_bub_hot_5946421838=1; ' \
-# 'YF-Ugrow-G0=ad06784f6deda07eea88e095402e4243; ' \
-# 'YF-V5-G0=d8480b079e226c170ff763917f70c4e7; ' \
+# 'YF-Ugrow-G0=57484c7c1ded49566c905773d5d00f82; ' \
+# 'YF-V5-G0=bb389e7e25cccb1fadd4b1334ab013c1; ' \
 # 'WBStore=8ca40a3ef06ad7b2|undefined; ' \
 # '_s_tentry=-; ' \
-# 'Apache=9912198186381.918.1468979728752; ' \
-# 'ULV=1468979728834:2:2:2:9912198186381.918.1468979728752:1468901454110; ' \
-# 'SCF=Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYme9DdPTZj-KUeJ44PRoFWRCIzIpnwaNo_4qNjxalnqZ8.; ' \
-# 'SUB=_2A256iq8lDeTxGeNH71QV8i_EyDSIHXVZ4YftrDV8PUNbmtBeLUaikW9Yz-k_Ex5Ytu7JuqA81XxchujYgg..; ' \
-# 'SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWao3w_lZAsY9plMij8OfY95JpX5K2hUgL.Fo-4ShqXeo2Re0n2dJLoIfQLxKnL122L1KzLxK-LBKBL12qLxKqL1-qLBoeLxK.LB.2LBo-LxK-L12eL1h-LxK-LBonL1heLxKBLBonL1h2LxKBLBonL12BLxK-L122LBK5LxKMLBoeL1Kqt; ' \
-# 'SUHB=0RyaGvGvQVrpGX; ' \
-# 'ALF=1500517109; ' \
-# 'SSOLoginState=1468981109; ' \
-# 'un=18639919430; ' \
-# 'YF-Page-G0=59104684d5296c124160a1b451efa4ac'
+# 'Apache=3013729271600.356.1468984228116; ' \
+# 'SINAGLOBAL=3013729271600.356.1468984228116; ' \
+# 'ULV=1468984228129:1:1:1:3013729271600.356.1468984228116:; ' \
+# 'SCF=Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYmHRMNMJVVdZ9Y4iYWKWDYus8A3p3aPPkZ6zlwQDadGUs.; ' \
+# 'SUB=_2A256ipvmDeTxGeRJ6lYT-C7OyD-IHXVZ4YourDV8PUNbmtBeLU_VkW8yAbQRExZ4YCZW-8iVhIE8aNwIiQ..; ' \
+# 'SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WFniDsvV_7qRulxkvm70.D25JpX5K2hUgL.FozNeKBE1h5Ee0e2dJLoI7f7qPWDi--4iKnfi-zp; ' \
+# 'SUHB=0V5UloHPDCAdL9; ' \
+# 'ALF=1500520246; ' \
+# 'SSOLoginState=1468984246; ' \
+# 'un=18600030181; ' \
+# 'wvr=6; ' \
+# 'wb_bub_hot_2714280233=1; ' \
+# 'YF-Page-G0=1ac418838b431e81ff2d99457147068c'
 
     my_cookies = {
-        'YF-Page-G0':'59104684d5296c124160a1b451efa4ac',
-        'YF-Ugrow-G0':'ad06784f6deda07eea88e095402e4243',
-        'YF-V5-G0':'d8480b079e226c170ff763917f70c4e7',
-        'SINAGLOBAL': '7696783314376.881.1468901454104',
+        'YF-Page-G0':'1ac418838b431e81ff2d99457147068c',
+        'YF-Ugrow-G0':'57484c7c1ded49566c905773d5d00f82',
+        'YF-V5-G0':'bb389e7e25cccb1fadd4b1334ab013c1',
+        'SINAGLOBAL': '3013729271600.356.1468984228116',
         '_s_tentry': '-',
-        'Apache': '9912198186381.918.1468979728752',
-        'ULV': '1468979728834:2:2:2:9912198186381.918.1468979728752:1468901454110',
-        'SUHB': '0RyaGvGvQVrpGX',
-        'SSOLoginState': '1468981109',
-        'un': '18639919430',
+        'Apache': '3013729271600.356.1468984228116',
+        'ULV': '1468984228129:1:1:1:3013729271600.356.1468984228116:',
+        'SUHB': '0V5UloHPDCAdL9',
+        'SSOLoginState': '1468984246',
+        'un': '18600030181',
         'wvr': '6',
-        'ALF': '1500517109',
-        'SUBP': '0033WrSXqPxfM725Ws9jqgMF55529P9D9WWao3w_lZAsY9plMij8OfY95JpX5K2hUgL.Fo-4ShqXeo2Re0n2dJLoIfQLxKnL122L1KzLxK-LBKBL12qLxKqL1-qLBoeLxK.LB.2LBo-LxK-L12eL1h-LxK-LBonL1heLxKBLBonL1h2LxKBLBonL12BLxK-L122LBK5LxKMLBoeL1Kqt',
-        'SCF':'Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYme9DdPTZj-KUeJ44PRoFWRCIzIpnwaNo_4qNjxalnqZ8.',
-        'SUB':'_2A256iq8lDeTxGeNH71QV8i_EyDSIHXVZ4YftrDV8PUNbmtBeLUaikW9Yz-k_Ex5Ytu7JuqA81XxchujYgg..',
-        'wb_bub_hot_5946421838':'1',
+        'ALF': '1500520246',
+        'SUBP': '0033WrSXqPxfM725Ws9jqgMF55529P9D9WFniDsvV_7qRulxkvm70.D25JpX5K2hUgL.FozNeKBE1h5Ee0e2dJLoI7f7qPWDi--4iKnfi-zp',
+        'SCF':'Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYmHRMNMJVVdZ9Y4iYWKWDYus8A3p3aPPkZ6zlwQDadGUs.',
+        'SUB':'_2A256ipvmDeTxGeRJ6lYT-C7OyD-IHXVZ4YourDV8PUNbmtBeLU_VkW8yAbQRExZ4YCZW-8iVhIE8aNwIiQ..',
+        'wb_bub_hot_2714280233':'1',
         'WBStore':'8ca40a3ef06ad7b2|undefined',
-        'UOR':'datagrand.com,widget.weibo.com,datagrand.com',
+        # 'UOR':'datagrand.com,widget.weibo.com,datagrand.com',
     }
 
     def start_requests(self):
@@ -124,6 +123,7 @@ class WebpcSpider(scrapy.spiders.Spider):
             self.login_uid = m1.groups()[0]
 
             url_fans='http://weibo.com/' + str(self.login_uid) + '/fans?rightmod=1&wvr=6'
+            # url_fans='http://weibo.com/2714280233/fans?from=100505&wvr=6&mod=headfans&current=fans#place'
             print "next_url"
             print url_fans
 
@@ -170,6 +170,10 @@ class WebpcSpider(scrapy.spiders.Spider):
             self.insert_uid()
             self.uid_tmp_list=[]
 
+            time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
+            run_page_str = time_now + '---' + response.url + "\r\n"
+            with open('run_page', 'ab') as f:
+                f.write(run_page_str)
 
             m2 = re.match(r'.*page next S_txt1 S_line1\\\" href=\\\"([^\"]*)\".*', str2)
             if m2:
@@ -198,10 +202,7 @@ class WebpcSpider(scrapy.spiders.Spider):
                     pass
 
 
-                time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-                run_page_str=time_now + '---' + response.url + "\r\n"
-                with open('run_page', 'ab') as f:
-                    f.write(run_page_str)
+
                 time.sleep(0.1)
                 return [scrapy.Request(url=next_url, meta={'cookiejar': 0}, dont_filter=True,callback=self.see_list
                                        )]
