@@ -26,7 +26,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
     start_page = 1
     run_page = 0
     start_search_page = 0
-    end_search_page = 50
+    end_search_page = 51
     login_uid = 0
     uid_tmp_list = []
     uid_write_num = 99
@@ -123,7 +123,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
             self.login_uid = m1.groups()[0]
 
             # url_fans='http://weibo.com/' + str(self.login_uid) + '/fans?rightmod=1&wvr=6'
-            url_fans = 'http://weibo.com/2714280233/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__103_page=1#Pl_Official_RelationFans__103'
+            url_fans = 'http://weibo.com/2714280233/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__103_page=50#Pl_Official_RelationFans__103'
             print "next_url"
             print url_fans
 
@@ -145,11 +145,11 @@ class WebpconeSpider(scrapy.spiders.Spider):
         #     f.write(response.body)
 
         str1 = response.body
-        if not self.start_search_page:
-            m_start = re.match(r'.*page=([\d]+).*', response.url)
-            if m_start:
-                current_page_tmp = m_start.groups()[0]
-                self.start_search_page = int(current_page_tmp)
+        # if not self.start_search_page:
+        #     m_start = re.match(r'.*page=([\d]+).*', response.url)
+        #     if m_start:
+        #         current_page_tmp = m_start.groups()[0]
+        #         self.start_search_page = int(current_page_tmp)
 
         # ul = response.xpath('//ul[contains(@class, "follow_list")]').extract()
         # print "ul"
@@ -160,7 +160,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
         m1 = re.match(r'.*\<!--粉丝列表--\>(.*)', str2)
         if m1:
             str2 = m1.groups()[0]
-            # with open('ul', 'wb') as f:
+            # with open('ul_not1page', 'wb') as f:
             #     f.write(str2)
             # ul = Selector(text=str2).xpath('//ul[contains(@class, "follow_list")]').extract()
             uid_dict_tmp = {}
@@ -178,7 +178,8 @@ class WebpconeSpider(scrapy.spiders.Spider):
             with open('run_page', 'ab') as f:
                 f.write(run_page_str)
 
-            m2 = re.match(r'.*page next S_txt1 S_line1\\\" href=\\\"([^\"]*)\".*', str2)
+            # m2 = re.match(r'.*page next S_txt1 S_line1\\\" href=\\\"([^\"]*)\".*', str2)
+            m2 = re.match(r'.*page prev S_txt1 S_line1\\\" bpfilter=\\\"page\\\" href=\\\"([^\"]*)\"(.*)', str2)
             if m2:
                 str3 = m2.groups()[0]
                 str3 = str3.replace("\\", "")
