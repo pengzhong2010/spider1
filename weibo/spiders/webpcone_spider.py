@@ -123,7 +123,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
             self.login_uid = m1.groups()[0]
 
             # url_fans='http://weibo.com/' + str(self.login_uid) + '/fans?rightmod=1&wvr=6'
-            url_fans='http://weibo.com/2714280233/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__103_page=144#Pl_Official_RelationFans__103'
+            url_fans='http://weibo.com/p/1005052714280233/myfollow?relate=fans#place'
             print "next_url"
             print url_fans
 
@@ -181,53 +181,53 @@ class WebpconeSpider(scrapy.spiders.Spider):
             with open('run_page', 'ab') as f:
                 f.write(run_page_str)
 
-            m2 = re.match(r'.*page next S_txt1 S_line1\\\" href=\\\"([^\"]*)\".*', str2)
-            if m2:
-                str3=m2.groups()[0]
-                str3=str3.replace("\\","")
+            # m2 = re.match(r'.*page next S_txt1 S_line1\\\" href=\\\"([^\"]*)\".*', str2)
+            # if m2:
+            #     str3=m2.groups()[0]
+            #     str3=str3.replace("\\","")
+            #
+            #     next_url='http://weibo.com'+str3
+            #
+            #     print "next_url"
+            #     print next_url
+            #
+            #     m_end = re.match(r'.*page=([\d]+).*', next_url)
+            #     if m_end:
+            #         next_page_tmp = m_end.groups()[0]
+            #
+            #         next_page_tmp=int(next_page_tmp)
+            #
+            #         if next_page_tmp>self.end_search_page:
+            #
+            #             return
+            #         if next_page_tmp<self.start_search_page:
+            #             replace_rule = re.compile("page=[\d]+")
+            #             next_url = re.sub(replace_rule, 'page='+ str(self.start_search_page) , next_url)
+            #             pass
+            #     else:
+            #         # return
+            #         pass
 
-                next_url='http://weibo.com'+str3
-
-                print "next_url"
-                print next_url
-
-                m_end = re.match(r'.*page=([\d]+).*', next_url)
-                if m_end:
-                    next_page_tmp = m_end.groups()[0]
-
-                    next_page_tmp=int(next_page_tmp)
-
-                    if next_page_tmp>self.end_search_page:
-                        
-                        return
-                    if next_page_tmp<self.start_search_page:
-                        replace_rule = re.compile("page=[\d]+")
-                        next_url = re.sub(replace_rule, 'page='+ str(self.start_search_page) , next_url)
-                        pass
-                else:
-                    # return
-                    pass
 
 
-
-                time.sleep(1)
-                new_url_tmp='http://weibo.com/p/1005052714280233/myfollow?relate=fans#place'
-                return [scrapy.Request(url=new_url_tmp, meta={'cookiejar': 0}, dont_filter=True,callback=self.see_list
-                                       )]
-            else:
-                time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-                run_error_str = time_now + '---' + response.url + "---" + "out 1" + "\r\n"
-                with open('run_page_error', 'ab') as f:
-                    f.write(run_error_str)
-                return [scrapy.Request(url=response.url, meta={'cookiejar': 0},dont_filter=True, callback=self.see_list
-                                       )]
+            time.sleep(10)
+            new_url_tmp='http://weibo.com/p/1005052714280233/myfollow?relate=fans#place'
+            return [scrapy.Request(url=new_url_tmp, meta={'cookiejar': 0}, dont_filter=True,callback=self.see_list
+                                   )]
+            # else:
+            #     time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
+            #     run_error_str = time_now + '---' + response.url + "---" + "out 1" + "\r\n"
+            #     with open('run_page_error', 'ab') as f:
+            #         f.write(run_error_str)
+            #     return [scrapy.Request(url=response.url, meta={'cookiejar': 0},dont_filter=True, callback=self.see_list
+            #                            )]
 
         else:
             time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
             run_error_str = time_now + '---' + response.url + "---" + "out 2" + "\r\n"
             with open('run_page_error', 'ab') as f:
                 f.write(run_error_str)
-            time.sleep(1)
+            time.sleep(10)
             return [scrapy.Request(url=response.url, meta={'cookiejar': 0},dont_filter=True, callback=self.see_list
                                    )]
 
