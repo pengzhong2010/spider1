@@ -55,24 +55,44 @@ class WebpcSpider(scrapy.spiders.Spider):
     }
 
 
+# 'UOR=datagrand.com,widget.weibo.com,datagrand.com; ' \
+# 'SINAGLOBAL=7696783314376.881.1468901454104; ' \
+# 'wvr=6; ' \
+# 'wb_bub_hot_5946421838=1; ' \
+# 'YF-Ugrow-G0=ad06784f6deda07eea88e095402e4243; ' \
+# 'YF-V5-G0=d8480b079e226c170ff763917f70c4e7; ' \
+# 'WBStore=8ca40a3ef06ad7b2|undefined; ' \
+# '_s_tentry=-; ' \
+# 'Apache=9912198186381.918.1468979728752; ' \
+# 'ULV=1468979728834:2:2:2:9912198186381.918.1468979728752:1468901454110; ' \
+# 'SCF=Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYme9DdPTZj-KUeJ44PRoFWRCIzIpnwaNo_4qNjxalnqZ8.; ' \
+# 'SUB=_2A256iq8lDeTxGeNH71QV8i_EyDSIHXVZ4YftrDV8PUNbmtBeLUaikW9Yz-k_Ex5Ytu7JuqA81XxchujYgg..; ' \
+# 'SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWao3w_lZAsY9plMij8OfY95JpX5K2hUgL.Fo-4ShqXeo2Re0n2dJLoIfQLxKnL122L1KzLxK-LBKBL12qLxKqL1-qLBoeLxK.LB.2LBo-LxK-L12eL1h-LxK-LBonL1heLxKBLBonL1h2LxKBLBonL12BLxK-L122LBK5LxKMLBoeL1Kqt; ' \
+# 'SUHB=0RyaGvGvQVrpGX; ' \
+# 'ALF=1500517109; ' \
+# 'SSOLoginState=1468981109; ' \
+# 'un=18639919430; ' \
+# 'YF-Page-G0=59104684d5296c124160a1b451efa4ac'
 
     my_cookies = {
-        'YF-Page-G0':'b98b45d9bba85e843a07e69c0880151a',
-        'YF-Ugrow-G0':'169004153682ef91866609488943c77f',
+        'YF-Page-G0':'59104684d5296c124160a1b451efa4ac',
+        'YF-Ugrow-G0':'ad06784f6deda07eea88e095402e4243',
+        'YF-V5-G0':'d8480b079e226c170ff763917f70c4e7',
         'SINAGLOBAL': '7696783314376.881.1468901454104',
         '_s_tentry': '-',
-        'Apache': '7696783314376.881.1468901454104',
-        'ULV': '1468901454110:1:1:1:7696783314376.881.1468901454104:',
-        'SUHB': '0Yhh8PX-cgXRYt',
-        'SSOLoginState': '1468901538',
+        'Apache': '9912198186381.918.1468979728752',
+        'ULV': '1468979728834:2:2:2:9912198186381.918.1468979728752:1468901454110',
+        'SUHB': '0RyaGvGvQVrpGX',
+        'SSOLoginState': '1468981109',
         'un': '18639919430',
         'wvr': '6',
-        'ALF': '1500437537',
+        'ALF': '1500517109',
         'SUBP': '0033WrSXqPxfM725Ws9jqgMF55529P9D9WWao3w_lZAsY9plMij8OfY95JpX5K2hUgL.Fo-4ShqXeo2Re0n2dJLoIfQLxKnL122L1KzLxK-LBKBL12qLxKqL1-qLBoeLxK.LB.2LBo-LxK-L12eL1h-LxK-LBonL1heLxKBLBonL1h2LxKBLBonL12BLxK-L122LBK5LxKMLBoeL1Kqt',
-        'SCF':'Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYmpLP3BmRFjjhxgsl40xnGlI_A0V9O4pA1MUshtFpxBj4.',
-        'SUB':'_2A256idjyDeTxGeNH71QV8i_EyDSIHXVZ_006rDV8PUNbmtBeLRjjkW9lYEAUtjMyFqIhHCol2n_DBv-WeQ..',
+        'SCF':'Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYme9DdPTZj-KUeJ44PRoFWRCIzIpnwaNo_4qNjxalnqZ8.',
+        'SUB':'_2A256iq8lDeTxGeNH71QV8i_EyDSIHXVZ4YftrDV8PUNbmtBeLUaikW9Yz-k_Ex5Ytu7JuqA81XxchujYgg..',
         'wb_bub_hot_5946421838':'1',
         'WBStore':'8ca40a3ef06ad7b2|undefined',
+        'UOR':'datagrand.com,widget.weibo.com,datagrand.com',
     }
 
     def start_requests(self):
