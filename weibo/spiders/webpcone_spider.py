@@ -17,8 +17,8 @@ from pymysql import PyMysql
 #url_fans
 #my_cookies
 
-class WebpcSpider(scrapy.spiders.Spider):
-    name = "webpc"
+class WebpconeSpider(scrapy.spiders.Spider):
+    name = "webpcone"
     allowed_domains = ['weibo.com','weibo.cn','sina.com.cn']
     # start_urls=['http://m.weibo.cn']
     surl = 'http://weibo.com/2714280233/follow?from=page_100505&wvr=6&mod=headfollow#place'
@@ -211,7 +211,8 @@ class WebpcSpider(scrapy.spiders.Spider):
 
 
                 time.sleep(1)
-                return [scrapy.Request(url=next_url, meta={'cookiejar': 0}, dont_filter=True,callback=self.see_list
+                new_url_tmp='http://weibo.com/p/1005052714280233/myfollow?relate=fans#place'
+                return [scrapy.Request(url=new_url_tmp, meta={'cookiejar': 0}, dont_filter=True,callback=self.see_list
                                        )]
             else:
                 time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
