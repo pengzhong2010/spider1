@@ -54,46 +54,21 @@ class WebpconeSpider(scrapy.spiders.Spider):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
     }
 
-    # 'YF-Ugrow-G0=57484c7c1ded49566c905773d5d00f82; ' \
-    # 'YF-V5-G0=bb389e7e25cccb1fadd4b1334ab013c1; ' \
-    # 'WBStore=8ca40a3ef06ad7b2|undefined; ' \
-    # '_s_tentry=-; ' \
-    # 'Apache=3013729271600.356.1468984228116; ' \
-    # 'SINAGLOBAL=3013729271600.356.1468984228116; ' \
-    # 'ULV=1468984228129:1:1:1:3013729271600.356.1468984228116:; ' \
-    # 'SCF=Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYmHRMNMJVVdZ9Y4iYWKWDYus8A3p3aPPkZ6zlwQDadGUs.; ' \
-    # 'SUB=_2A256ipvmDeTxGeRJ6lYT-C7OyD-IHXVZ4YourDV8PUNbmtBeLU_VkW8yAbQRExZ4YCZW-8iVhIE8aNwIiQ..; ' \
-    # 'SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WFniDsvV_7qRulxkvm70.D25JpX5K2hUgL.FozNeKBE1h5Ee0e2dJLoI7f7qPWDi--4iKnfi-zp; ' \
-    # 'SUHB=0V5UloHPDCAdL9; ' \
-    # 'ALF=1500520246; ' \
-    # 'SSOLoginState=1468984246; ' \
-    # 'un=18600030181; ' \
-    # 'wvr=6; ' \
-    # 'wb_bub_hot_2714280233=1; ' \
-    # 'YF-Page-G0=1ac418838b431e81ff2d99457147068c'
-
-    my_cookies = {
-        'YF-Page-G0': '1ac418838b431e81ff2d99457147068c',
-        'YF-Ugrow-G0': '57484c7c1ded49566c905773d5d00f82',
-        'YF-V5-G0': 'bb389e7e25cccb1fadd4b1334ab013c1',
-        'SINAGLOBAL': '3013729271600.356.1468984228116',
-        '_s_tentry': '-',
-        'Apache': '3013729271600.356.1468984228116',
-        'ULV': '1468984228129:1:1:1:3013729271600.356.1468984228116:',
-        'SUHB': '0V5UloHPDCAdL9',
-        'SSOLoginState': '1468984246',
-        'un': '18600030181',
-        'wvr': '6',
-        'ALF': '1500520246',
-        'SUBP': '0033WrSXqPxfM725Ws9jqgMF55529P9D9WFniDsvV_7qRulxkvm70.D25JpX5K2hUgL.FozNeKBE1h5Ee0e2dJLoI7f7qPWDi--4iKnfi-zp',
-        'SCF': 'Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYmHRMNMJVVdZ9Y4iYWKWDYus8A3p3aPPkZ6zlwQDadGUs.',
-        'SUB': '_2A256ipvmDeTxGeRJ6lYT-C7OyD-IHXVZ4YourDV8PUNbmtBeLU_VkW8yAbQRExZ4YCZW-8iVhIE8aNwIiQ..',
-        'wb_bub_hot_2714280233': '1',
-        'WBStore': '8ca40a3ef06ad7b2|undefined',
-        # 'UOR':'datagrand.com,widget.weibo.com,datagrand.com',
-    }
+    str_cookies = 'YF-Ugrow-G0=8751d9166f7676afdce9885c6d31cd61; SSOLoginState=1469003033; wvr=6; YF-V5-G0=a5a264208a5b5a42590274f52e6c7304; wb_bub_hot_2714280233=1; _s_tentry=login.sina.com.cn; Apache=3397080522183.555.1469003034162; SINAGLOBAL=3397080522183.555.1469003034162; ULV=1469003034183:1:1:1:3397080522183.555.1469003034162:; YF-Page-G0=59104684d5296c124160a1b451efa4ac; UOR=login.sina.com.cn,weibo.com,login.sina.com.cn; WBStore=8ca40a3ef06ad7b2|undefined; SCF=Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYmZ68UBJg_Z8C8ZWMxi4-bayn_Ts6NLBFHiRO_jvOg3gw.; SUB=_2A256iz1sDeTxGeRJ6lYT-C7OyD-IHXVZ4SmkrDV8PUJbmtBeLXTGkW9kxcILaHhxJHshkhVzd-SU9W-uxg..; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WFniDsvV_7qRulxkvm70.D25JpX5o2p5NHD95QES02Xeon7eoe0Ws4DqcjSMs87ICH81C-RSCHFeBtt; SUHB=0gHTsxS7yAtBlF; ALF=1500539032'
+    my_cookies = {}
 
     def start_requests(self):
+
+        cookies_list = self.str_cookies.split('; ')
+        my_cookies = {}
+        for i in cookies_list:
+            tmp = i.split('=')
+            # print tmp
+            k = tmp[0]
+            # k=k.strip(k)
+            v = tmp[1]
+            # v=v.strip(v)
+            self.my_cookies.setdefault(k, v)
 
         self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
                                  conf1.MYSQL_DG_DB)
