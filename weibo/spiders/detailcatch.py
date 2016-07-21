@@ -86,7 +86,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
                                    )]
 
         if not self.detail_catching:
-            time.sleep(0.3)
+            time.sleep(1)
             self.uid_info={}
             self.get_uid_info()
             if self.uid_info.get('uid'):
