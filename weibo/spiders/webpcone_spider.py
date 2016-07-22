@@ -59,15 +59,15 @@ class WebpconeSpider(scrapy.spiders.Spider):
 
     def start_requests(self):
 
-        cookies_list = self.str_cookies.split('; ')
-        my_cookies = {}
+        cookies_list = conf1.PAPI_COOKIES.split('; ')
+
         for i in cookies_list:
             tmp = i.split('=')
-            # print tmp
+
             k = tmp[0]
-            # k=k.strip(k)
+
             v = tmp[1]
-            # v=v.strip(v)
+
             self.my_cookies.setdefault(k, v)
 
         self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
