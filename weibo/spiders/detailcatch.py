@@ -81,12 +81,15 @@ class DetailcatchSpider(scrapy.spiders.Spider):
 
             else:
                 time.sleep(1)
-                return [
-                    scrapy.Request(url=response.url, meta={'cookiejar': 0}, dont_filter=True, callback=self.see_home
-                                   )]
+
+                self.detail_catching = 0
+                self.uid_listkey = self.uid_listkey + 1
+                # return [
+                #     scrapy.Request(url=response.url, meta={'cookiejar': 0}, dont_filter=True, callback=self.see_home
+                #                    )]
 
         if not self.detail_catching:
-            time.sleep(1)
+            time.sleep(0.3)
             self.uid_info={}
             self.get_uid_info()
             if self.uid_info.get('uid'):
