@@ -93,154 +93,156 @@ class Parse():
             return
         info={}
         str1=self.str_parse_tmp
-        m2 = re.match(r'.*\"html\":\"\<!--模块--\>(.*)', str1)
-        if m2:
-            str2 = m2.groups()[0]
+        self.uid_info={}
+        try:
+            m2 = re.match(r'.*\"html\":\"\<!--模块--\>(.*)', str1)
+            if m2:
+                str2 = m2.groups()[0]
 
-            list1 = Selector(text=str2).xpath('//div[contains(@class, "m_wrap clearfix")]/ul/li')
-            # print list1
-            for index, link in enumerate(list1):
-                key = ''
-                values = []
-                list_tmp = link.xpath('span/text()').extract()
-                if list_tmp:
-                    key = list_tmp[0]
-                    if key == u'昵称：':
-                        info['nick_name'] = list_tmp[1]
-                    elif key == u'所在地：':
-                        position_list = list_tmp[1].split(' ')
-                        position_len = len(position_list)
-                        if position_len:
-                            info['province'] = position_list[0]
-                            if position_len > 1:
-                                info['city'] = position_list[1]
-                    elif key == u'性别：':
-                        if list_tmp[1] == u'男':
-                            info['sex'] = 1
-                        else:
-                            info['sex'] = 0
-                    elif key == u'简介：':
-                        info['desc_fill'] = list_tmp[1]
-                    elif key == u'生日：':
-                        str_s = list_tmp[1]
-                        try:
-                            str_s = str_s.replace(u'年', '-')
-                            str_s = str_s.replace(u'月', '-')
-                            str_s = str_s.replace(u'日', '')
-                            br_list = str_s.split('-')
-
-                            br_m = int(br_list[1])
-                            if br_m < 10:
-                                br_m_str = '0' + str(br_m)
+                list1 = Selector(text=str2).xpath('//div[contains(@class, "m_wrap clearfix")]/ul/li')
+                # print list1
+                for index, link in enumerate(list1):
+                    key = ''
+                    values = []
+                    list_tmp = link.xpath('span/text()').extract()
+                    if list_tmp:
+                        key = list_tmp[0]
+                        if key == u'昵称：':
+                            info['nick_name'] = list_tmp[1]
+                        elif key == u'所在地：':
+                            position_list = list_tmp[1].split(' ')
+                            position_len = len(position_list)
+                            if position_len:
+                                info['province'] = position_list[0]
+                                if position_len > 1:
+                                    info['city'] = position_list[1]
+                        elif key == u'性别：':
+                            if list_tmp[1] == u'男':
+                                info['sex'] = 1
                             else:
-                                br_m_str = str(br_m)
-                            br_list[1] = br_m_str
-                            br_m = int(br_list[2])
-                            if br_m < 10:
-                                br_m_str = '0' + str(br_m)
-                            else:
-                                br_m_str = str(br_m)
-                            br_list[2] = br_m_str
-                            str_s = '-'.join(br_list)
-                            # print str_s
+                                info['sex'] = 0
+                        elif key == u'简介：':
+                            info['desc_fill'] = list_tmp[1]
+                        elif key == u'生日：':
+                            str_s = list_tmp[1]
+                            try:
+                                str_s = str_s.replace(u'年', '-')
+                                str_s = str_s.replace(u'月', '-')
+                                str_s = str_s.replace(u'日', '')
+                                br_list = str_s.split('-')
 
-                            s = time.mktime(time.strptime(str(str_s), '%Y-%m-%d'))
-                        except Exception as e:
-                            s = 0
-                        info['birth_fill'] = int(s)
+                                br_m = int(br_list[1])
+                                if br_m < 10:
+                                    br_m_str = '0' + str(br_m)
+                                else:
+                                    br_m_str = str(br_m)
+                                br_list[1] = br_m_str
+                                br_m = int(br_list[2])
+                                if br_m < 10:
+                                    br_m_str = '0' + str(br_m)
+                                else:
+                                    br_m_str = str(br_m)
+                                br_list[2] = br_m_str
+                                str_s = '-'.join(br_list)
+                                # print str_s
 
-
-                    elif key == u'注册时间：':
-                        # print list_tmp
-                        str_s = list_tmp[1]
-                        s = time.mktime(time.strptime(str_s, '%Y-%m-%d'))
-                        info['regis_date'] = int(s)
-                    elif key == u'公司：':
-                        company_list = link.xpath('span')
-                        company_list_info = []
-                        for ix, linkx in enumerate(company_list):
-                            company_one_list = linkx.xpath('text()').extract()
-                            company_one_str = ''
-                            if not company_one_list[0] == u'公司：':
-                                part1 = linkx.xpath('a/text()').extract()
-                                company_one_str = part1[0]
-                                # print company_one_str
-                                for i in company_one_list:
-                                    company_one_str = company_one_str + i
-                                # print company_one_str
-                                company_list_info.append(company_one_str)
-                        # info['company'] = json.dumps(company_list_info)
-                        info['company'] = ';'.join(company_list_info)
-                    elif key == u'大学：':
-                        university_list = link.xpath('span')
-                        university_list_info = []
-                        for ix, linkx in enumerate(university_list):
-                            university_one_list = linkx.xpath('text()').extract()
-                            university_one_str = ''
-                            if not university_one_list[0] == u'大学：':
-                                part1 = linkx.xpath('a/text()').extract()
-                                university_one_str = part1[0]
-                                # print company_one_str
-                                for i in university_one_list:
-                                    university_one_str = university_one_str + i
-                                # print university_one_str
-                                university_list_info.append(university_one_str)
-                        # info['university'] = json.dumps(university_list_info)
-                        info['university'] = ';'.join(university_list_info)
-                    elif key == u'标签：':
-                        spans = link.xpath('span/a/text()').extract()
-                        if spans:
-                            info['tags'] = json.dumps(spans)
-                            # tags=spans[1]
-
-        # "html":"<div class="PRF_modwrap S_line1 clearfix">
-        m3 = re.match(r'.*\"html\":\"\<div class=\"PRF_modwrap S_line1 clearfix\"\>(.*)', str1)
-        if m3:
-            str3 = m3.groups()[0]
-            # print str3
-            list2 = Selector(text=str3).xpath('//p[contains(@class, "level_info")]/span')
-            for index, link in enumerate(list2):
-                x1 = link.xpath('text()').extract()
-                x2 = link.xpath('span/text()').extract()
-
-                # print x1[0]
-                # print x2[0]
-                if x1[0] == u' 当前等级： ':
-                    m3_1 = re.match(r'.*([\d]+).*', str1)
-                    if m3_1:
-                        info['weibo_level'] = m3_1.groups()[0]
-
-                elif x1[0] == u' 经验值： ':
-                    info['exp_value'] = x2[0]
+                                s = time.mktime(time.strptime(str(str_s), '%Y-%m-%d'))
+                            except Exception as e:
+                                s = 0
+                            info['birth_fill'] = int(s)
 
 
-                    # print list2
+                        elif key == u'注册时间：':
+                            # print list_tmp
+                            str_s = list_tmp[1]
+                            s = time.mktime(time.strptime(str_s, '%Y-%m-%d'))
+                            info['regis_date'] = int(s)
+                        elif key == u'公司：':
+                            company_list = link.xpath('span')
+                            company_list_info = []
+                            for ix, linkx in enumerate(company_list):
+                                company_one_list = linkx.xpath('text()').extract()
+                                company_one_str = ''
+                                if not company_one_list[0] == u'公司：':
+                                    part1 = linkx.xpath('a/text()').extract()
+                                    company_one_str = part1[0]
+                                    # print company_one_str
+                                    for i in company_one_list:
+                                        company_one_str = company_one_str + i
+                                    # print company_one_str
+                                    company_list_info.append(company_one_str)
+                            # info['company'] = json.dumps(company_list_info)
+                            info['company'] = ';'.join(company_list_info)
+                        elif key == u'大学：':
+                            university_list = link.xpath('span')
+                            university_list_info = []
+                            for ix, linkx in enumerate(university_list):
+                                university_one_list = linkx.xpath('text()').extract()
+                                university_one_str = ''
+                                if not university_one_list[0] == u'大学：':
+                                    part1 = linkx.xpath('a/text()').extract()
+                                    university_one_str = part1[0]
+                                    # print company_one_str
+                                    for i in university_one_list:
+                                        university_one_str = university_one_str + i
+                                    # print university_one_str
+                                    university_list_info.append(university_one_str)
+                            # info['university'] = json.dumps(university_list_info)
+                            info['university'] = ';'.join(university_list_info)
+                        elif key == u'标签：':
+                            spans = link.xpath('span/a/text()').extract()
+                            if spans:
+                                info['tags'] = json.dumps(spans)
+                                # tags=spans[1]
 
-        # "html":"<div class="WB_cardwrap S_bg2" >
-        m4 = re.match(r'.*\"html\":\"\<div class=\"WB_cardwrap S_bg2\" \>(.*)', str1)
-        if m4:
-            str4 = m4.groups()[0]
-            list4 = Selector(text=str4).xpath('//table[contains(@class, "tb_counter")]/tbody/tr/td/a')
-            # print list4.extract()
-            for index, link4 in enumerate(list4):
+            # "html":"<div class="PRF_modwrap S_line1 clearfix">
+            m3 = re.match(r'.*\"html\":\"\<div class=\"PRF_modwrap S_line1 clearfix\"\>(.*)', str1)
+            if m3:
+                str3 = m3.groups()[0]
+                # print str3
+                list2 = Selector(text=str3).xpath('//p[contains(@class, "level_info")]/span')
+                for index, link in enumerate(list2):
+                    x1 = link.xpath('text()').extract()
+                    x2 = link.xpath('span/text()').extract()
 
-                x1 = link4.xpath('span/text()').extract()
-                x2 = link4.xpath('strong/text()').extract()
+                    # print x1[0]
+                    # print x2[0]
+                    if x1[0] == u' 当前等级： ':
+                        m3_1 = re.match(r'.*([\d]+).*', str1)
+                        if m3_1:
+                            info['weibo_level'] = m3_1.groups()[0]
 
-                if x1[0] == u'关注':
-                    info['attr_count'] = x2[0]
-                if x1[0] == u'粉丝':
-                    info['fensi_count'] = x2[0]
-                if x1[0] == u'微博':
-                    info['weibo_count'] = x2[0]
-
-        # else:
-        #     print "not match"
-
-        # print info
-        self.uid_info=info
+                    elif x1[0] == u' 经验值： ':
+                        info['exp_value'] = x2[0]
 
 
+                        # print list2
+
+            # "html":"<div class="WB_cardwrap S_bg2" >
+            m4 = re.match(r'.*\"html\":\"\<div class=\"WB_cardwrap S_bg2\" \>(.*)', str1)
+            if m4:
+                str4 = m4.groups()[0]
+                list4 = Selector(text=str4).xpath('//table[contains(@class, "tb_counter")]/tbody/tr/td/a')
+                # print list4.extract()
+                for index, link4 in enumerate(list4):
+
+                    x1 = link4.xpath('span/text()').extract()
+                    x2 = link4.xpath('strong/text()').extract()
+
+                    if x1[0] == u'关注':
+                        info['attr_count'] = x2[0]
+                    if x1[0] == u'粉丝':
+                        info['fensi_count'] = x2[0]
+                    if x1[0] == u'微博':
+                        info['weibo_count'] = x2[0]
+
+            # else:
+            #     print "not match"
+
+            # print info
+            self.uid_info=info
+        except Exception as e:
+            pass
 
 
     def insert_uid_info(self):
@@ -249,6 +251,8 @@ class Parse():
             return
 
         info=self.uid_info
+        if not info:
+            return
         info_keys=[]
         info_values=[]
 
