@@ -212,16 +212,11 @@ class WebpconeSpider(scrapy.spiders.Spider):
         t_tuple = []
         for i in self.uid_tmp_list:
             i = int(i)
-            t_tuple_tmp = tuple([i])
-            t_tuple.append(t_tuple_tmp)
+            # t_tuple_tmp = tuple([i])
+            # t_tuple.append(t_tuple_tmp)
 
-        sql = """
-            insert into weibo_fensi_info (
-                `uid`
-            ) values (%s)
+            sql = "insert into weibo_fensi_info ( `uid` ) values ( %d )" % i
+            ret = self.mysql_con.excute(sql , "one")
 
-        """
-        ret = self.mysql_con.excute(sql, "many", t_tuple)
-
-        print ret
+            # print ret
 
