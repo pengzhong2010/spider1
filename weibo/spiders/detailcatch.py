@@ -135,7 +135,10 @@ class DetailcatchSpider(scrapy.spiders.Spider):
                     update weibo_fensi_info set create_time=%s where id=%s
 
                 """
-        ret = self.mysql_con.excute(sql, "one", t_tuple1)
+            ret = self.mysql_con.excute(sql, "one", t_tuple1)
+            w_str=str(id)+"\r\n"
+            with open('uid_detail_run', 'ab') as f:
+                f.write(w_str)
 
 
     def get_uid_info(self):
