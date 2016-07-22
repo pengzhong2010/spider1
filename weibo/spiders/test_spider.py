@@ -32,14 +32,16 @@ class TestSpider(scrapy.spiders.Spider):
         #     f.write(response.body)
 
         mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD, conf1.MYSQL_DG_DB)
-
+        i=123
+        sql = "insert into fensi_daily_static ( `appid` ) values ( %d )" % i
+        ret = mysql_con.excute(sql, "one")
         # sql = """
         # select uid from weibo_fans_origin where status=0 order by id limit 100
         # """
         # ret = mysql_con.select(sql)
 
-        sql = "select id from weibo_fensi_info_id where id = %s " % 1237
-        ret = mysql_con.select(sql,'one')
+        # sql = "select id from weibo_fensi_info_id where id = %s " % 1237
+        # ret = mysql_con.select(sql,'one')
         # sql = "select article_infoid, date_format(article_time, \"%%Y%%m%%d %%H\"), thum_url, small_thum_url from article_info where article_infoid = %d" % article_infoid
         # article_tuple = self._pymysql.select(sql, 'one')
         # t_tuple = tuple(["xx", "oo", 3190353011])

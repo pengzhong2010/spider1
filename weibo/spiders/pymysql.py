@@ -89,6 +89,7 @@ class PyMysql:
             ret_status = True
         except (AttributeError, MySQLdb.OperationalError):
             self.rollback()
+            print "mysql not connected, host: %s, port: %d, user: %s, db: %s, sql: %s, err_msg: %s" % (self._host, self._port, self._user, self._db, sql, traceback.format_exc().replace("\n", ""))
             # ilog.error("mysql not connected, host: %s, port: %d, user: %s, db: %s, sql: %s, err_msg: %s" %
             #            (self._host, self._port, self._user, self._db, sql, traceback.format_exc().replace("\n", "")))
             time.sleep(self._internal)
@@ -101,6 +102,7 @@ class PyMysql:
             ret_status = True
         except Exception as e:
             self.rollback()
+            print "inserting error, host: %s, port: %d, user: %s, db: %s, sql: %s, err_msg: %s\t%s" %   (self._host, self._port, self._user, self._db, sql, str(e), traceback.format_exc().replace("\n", ""))
             # ilog.error("inserting error, host: %s, port: %d, user: %s, db: %s, sql: %s, err_msg: %s\t%s" %
             #            (self._host, self._port, self._user, self._db, sql, str(e), traceback.format_exc().replace("\n", "")))
             # if e.args[0] == 2006:

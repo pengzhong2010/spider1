@@ -506,3 +506,58 @@ Set-Cookie: M_WEIBOCN_PARAMS=featurecode%3D20000181%26fid%3D1005055708787172%26u
  'scheduler/enqueued/memory': 1,
  'start_time': datetime.datetime(2016, 7, 18, 6, 5, 53, 758000)}
 2016-07-18 14:05:54 [scrapy] INFO: Spider closed (finished)
+2016-07-20 12:08:39 [scrapy] INFO: Scrapy 1.1.1 started (bot: weibo)
+2016-07-20 12:08:39 [scrapy] INFO: Overridden settings: {'COOKIES_DEBUG': True, 'NEWSPIDER_MODULE': 'weibo.spiders', 'CONCURRENT_REQUESTS_PER_DOMAIN': 3, 'SPIDER_MODULES': ['weibo.spiders'], 'CONCURRENT_REQUESTS_PER_IP': 3, 'BOT_NAME': 'weibo', 'DOWNLOAD_TIMEOUT': 10, 'LOG_FILE': 'log/log.txt'}
+2016-07-20 12:08:40 [scrapy] INFO: Enabled extensions:
+['scrapy.extensions.logstats.LogStats',
+ 'scrapy.extensions.telnet.TelnetConsole',
+ 'scrapy.extensions.corestats.CoreStats']
+2016-07-20 12:08:41 [scrapy] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.chunked.ChunkedTransferMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2016-07-20 12:08:41 [scrapy] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2016-07-20 12:08:41 [scrapy] INFO: Enabled item pipelines:
+[]
+2016-07-20 12:08:42 [scrapy] INFO: Spider opened
+2016-07-20 12:08:42 [scrapy] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2016-07-20 12:08:42 [scrapy] DEBUG: Telnet console listening on 127.0.0.1:6023
+2016-07-20 12:08:42 [scrapy] DEBUG: Sending cookies to: <GET http://weibo.com/2714280233/fans?from=100505&wvr=6&mod=headfans&current=fans#place>
+Cookie: SUHB=0V5UloHPDCAdL9; SUB=_2A256ipvmDeTxGeRJ6lYT-C7OyD-IHXVZ4YourDV8PUNbmtBeLU_VkW8yAbQRExZ4YCZW-8iVhIE8aNwIiQ..; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WFniDsvV_7qRulxkvm70.D25JpX5K2hUgL.FozNeKBE1h5Ee0e2dJLoI7f7qPWDi--4iKnfi-zp; YF-Page-G0=1ac418838b431e81ff2d99457147068c; ALF=1500520246; SCF=Aih4hh1Z4R1PBln4AY5NLT3VNIKRuaSE0wMBHGYKGVYmHRMNMJVVdZ9Y4iYWKWDYus8A3p3aPPkZ6zlwQDadGUs.; ULV=1468984228129:1:1:1:3013729271600.356.1468984228116:; WBStore=8ca40a3ef06ad7b2|undefined; YF-Ugrow-G0=57484c7c1ded49566c905773d5d00f82; wvr=6; YF-V5-G0=bb389e7e25cccb1fadd4b1334ab013c1; SINAGLOBAL=3013729271600.356.1468984228116; wb_bub_hot_2714280233=1; Apache=3013729271600.356.1468984228116; SSOLoginState=1468984246; un=18600030181; _s_tentry=-
+
+2016-07-20 12:08:45 [scrapy] DEBUG: Crawled (200) <GET http://weibo.com/2714280233/fans?from=100505&wvr=6&mod=headfans&current=fans#place> (referer: None)
+2016-07-20 12:08:45 [scrapy] DEBUG: Filtered duplicate request: <GET http://weibo.com/2714280233/fans?from=100505&wvr=6&mod=headfans&current=fans#place> - no more duplicates will be shown (see DUPEFILTER_DEBUG to show all duplicates)
+2016-07-20 12:08:45 [scrapy] INFO: Closing spider (finished)
+2016-07-20 12:08:45 [scrapy] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 1011,
+ 'downloader/request_count': 1,
+ 'downloader/request_method_count/GET': 1,
+ 'downloader/response_bytes': 19763,
+ 'downloader/response_count': 1,
+ 'downloader/response_status_count/200': 1,
+ 'dupefilter/filtered': 1,
+ 'finish_reason': 'finished',
+ 'finish_time': datetime.datetime(2016, 7, 20, 4, 8, 45, 670000),
+ 'log_count/DEBUG': 4,
+ 'log_count/INFO': 7,
+ 'request_depth_max': 1,
+ 'response_received_count': 1,
+ 'scheduler/dequeued': 1,
+ 'scheduler/dequeued/memory': 1,
+ 'scheduler/enqueued': 1,
+ 'scheduler/enqueued/memory': 1,
+ 'start_time': datetime.datetime(2016, 7, 20, 4, 8, 42, 524000)}
+2016-07-20 12:08:45 [scrapy] INFO: Spider closed (finished)

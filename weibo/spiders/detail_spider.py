@@ -41,21 +41,20 @@ class DetailSpider(scrapy.spiders.Spider):
     #     print response.headers
     #     print 'meta'
     #     print response.meta
-    headers={
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Encoding':'gzip,deflate,sdch',
+    my_headers={
+        'Accept': '*/*',
+        'Accept-Encoding':'gzip, deflate',
         'Accept-Language':'zh-CN,zh;q=0.8',
-        'Cache-Control':'no-cache',
+
         'Connection':'keep-alive',
-        'Host':'m.weibo.cn',
-        'Pragma':'no-cache',
-        'Upgrade-Insecure-Requests':'1',
-        'User-Agent':'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
+        'Host':'passport.weibo.cn',
+
+        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.108 Safari/537.36 2345Explorer/7.1.0.12633',
     }
     def start_requests(self):
 
-        self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
-                                 conf1.MYSQL_DG_DB)
+        # self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
+        #                          conf1.MYSQL_DG_DB)
 
 
 
@@ -72,13 +71,14 @@ class DetailSpider(scrapy.spiders.Spider):
         # print 'meta'
         # print response.meta
         # print response.meta['cookiejar']
+        # return
 
         next_url = response.xpath('//a[contains(@class,"btn btnWhite")]//@href').extract()
         # print 'next_url'
         # print next_url[0]
 
         # print
-
+        time.sleep(1)
         return [scrapy.Request(url=next_url[0], meta={'cookiejar':response.meta['cookiejar']},
                                callback=self.see_login
                                )]
@@ -92,6 +92,8 @@ class DetailSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
+        # return
+        time.sleep(1)
         return [scrapy.FormRequest(url="https://passport.weibo.cn/sso/login",
                                    method="POST",
                             formdata={
@@ -115,14 +117,16 @@ class DetailSpider(scrapy.spiders.Spider):
     def after_login(self,response):
         # list_all=self.get_uid_list()
 
-        # print 'url'
-        # print response.url
-        # print 'body'
-        # print response.body
-        # print 'headers'
-        # print response.headers
-        # print 'meta'
-        # print response.meta
+        print 'url'
+        print response.url
+        print 'body'
+        print response.body
+        print 'headers'
+        print response.headers
+        print 'meta'
+        print response.meta
+        # with open('detail_log_in', 'wb') as f:
+        #     f.write(response.body)
         # return
         #check res login
 
@@ -152,9 +156,10 @@ class DetailSpider(scrapy.spiders.Spider):
                     # with open('info2log', 'ab') as f:
                     #     f.write(str2_tmp)
 
-                self.uid_catching=0
-                time.sleep(10)
-                # return
+                # self.uid_catching=0
+                # time.sleep(10)
+
+
 
 
         if not self.uid_catching:
@@ -175,7 +180,9 @@ class DetailSpider(scrapy.spiders.Spider):
             # print uid_tmp
             # return
             if self.uid_info:
-                # self.uid_info['uid']=uid_tmp
+                print self.uid_info
+                # return
+
                 uid_tmp=self.uid_info.get("uid")
                 if uid_tmp:
 
@@ -223,6 +230,11 @@ class DetailSpider(scrapy.spiders.Spider):
         #
         # list1 = str1.split("\n")
         # return list1
+        # list1=[1715524730]
+        # return list1
+        self.uid_info={'id':1,'uid':1715524730}
+        return
+
         if self.list_all:
 
         # self.list_all = self.get_uid_list()
@@ -260,11 +272,9 @@ class DetailSpider(scrapy.spiders.Spider):
         #select uid from weibo_fans_origin where status=0 order by id limit 100
 
         sql = """
-        select a.id,a.uid from weibo_fensi_info a
-            left join weibo_fensi_info_id b
-            on a.id=b.id
-            where catch_status is null
-            order by a.id
+        select id,uid from weibo_fensi_info
+            where create_time = 0
+            order by id
             limit 100
         """
         ret = self.mysql_con.select(sql)
@@ -297,7 +307,12 @@ class DetailSpider(scrapy.spiders.Spider):
     def update_uid_data(self):
         data_update=self.uid_info
         if data_update.get("id"):
-            pass
+            print data_update
+            with open('info2_171', 'wb') as f:
+                f.write(data_update.get("info2"))
+            with open('info1_171', 'wb') as f:
+                f.write(data_update.get("info1"))
+
 
 
 
