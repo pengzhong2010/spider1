@@ -73,7 +73,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
             m1 = re.match(r'.*\<div id=\"plc_main\"\>\<\/div\>\<\/div\>\"\}\)\<\/script\>(.*)', str1)
 
             #loop open
-            # self.detail_catching = 0
+            self.detail_catching = 0
 
             if m1:
                 str2= m1.groups()[0]
