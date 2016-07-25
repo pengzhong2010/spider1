@@ -6,6 +6,9 @@ from scrapy.http import HtmlResponse
 import re
 import datetime
 import time
+import sys
+sys.setrecursionlimit(1000000)
+
 
 from rec_driver import *
 # from pyredis import RedisKv
