@@ -181,7 +181,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
                     # return
                     pass
 
-                time.sleep(1)
+                time.sleep(1.3)
                 return [scrapy.Request(url=next_url, meta={'cookiejar': 0}, dont_filter=True, callback=self.see_list
                                        )]
             else:
@@ -196,9 +196,20 @@ class WebpconeSpider(scrapy.spiders.Spider):
         else:
             time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
             run_error_str = time_now + '---' + response.url + "---" + "out 2" + "\r\n"
+
+
+            # str_url_wrong='https://passport.weibo.com/visitor/visitor'
+            m_url = re.match(r'.*(https://passport.weibo.com/visitor/visitor).*', response.url)
+            if m_url:
+                str4 = m_url.groups()[0]
+                run_error_str = run_error_str +"---" + str4
+                with open('run_page_error', 'ab') as f:
+                    f.write(run_error_str)
+                return
+
             with open('run_page_error', 'ab') as f:
                 f.write(run_error_str)
-            time.sleep(1)
+            time.sleep(1.3)
             return [scrapy.Request(url=response.url, meta={'cookiejar': 0}, dont_filter=True, callback=self.see_list
                                    )]
 
