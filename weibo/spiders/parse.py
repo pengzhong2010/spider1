@@ -92,6 +92,7 @@ class Parse():
             # else:
             #     # pass
             #     return self.parse_go()
+        time.sleep(0.05)
 
 
     def parse_text(self):
