@@ -6,8 +6,8 @@ from scrapy.http import HtmlResponse
 import re
 import datetime
 import time
-import sys
-sys.setrecursionlimit(1000000)
+# import sys
+# sys.setrecursionlimit(10000)
 
 
 from rec_driver import *
@@ -86,13 +86,13 @@ class Parse():
             if self.str_parse_tmp:
                 self.parse_text()
                 self.insert_uid_info()
-                # return self.parse_go()
+        return self.parse_go()
 
 
             # else:
             #     # pass
             #     return self.parse_go()
-        time.sleep(0.05)
+        # time.sleep(0.05)
 
 
     def parse_text(self):
@@ -238,9 +238,9 @@ class Parse():
 
                     if x1[0] == u'关注':
                         info['attr_count'] = x2[0]
-                    if x1[0] == u'粉丝':
+                    elif x1[0] == u'粉丝':
                         info['fensi_count'] = x2[0]
-                    if x1[0] == u'微博':
+                    elif x1[0] == u'微博':
                         info['weibo_count'] = x2[0]
 
             # else:
@@ -266,6 +266,8 @@ class Parse():
         # info_keys.append('id')
         # info_values.append(int(id))
 
+        # print info
+
         nick_name=info.get('nick_name')
         if nick_name:
             info_keys.append('nick_name')
@@ -289,7 +291,7 @@ class Parse():
             info_keys.append('exp_value')
             info_values.append(int(exp_value))
         sex = info.get('sex')
-        if sex:
+        if sex is not None:
             info_keys.append('sex')
             info_values.append(sex)
         city = info.get('city')
@@ -350,8 +352,11 @@ class Parse():
 
 def main():
     tm = Parse()
-    while 1:
-        tm.parse_go()
+    # while 1:
+    #     tm.parse_go()
+
+    tm.parse_go()
+
 
 
     # rm.test()
