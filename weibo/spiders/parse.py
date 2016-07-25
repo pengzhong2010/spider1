@@ -70,9 +70,9 @@ class Parse():
         else:
             print sql
             print "sleeping"
-            time.sleep(60)
-            return self.select_uid_for_parse()
-
+            # time.sleep(60)
+            # return self.select_uid_for_parse()
+            return 0
 
 
     def parse_go(self):
@@ -86,7 +86,7 @@ class Parse():
             if self.str_parse_tmp:
                 self.parse_text()
                 self.insert_uid_info()
-        return self.parse_go()
+            return self.parse_go()
 
 
             # else:
