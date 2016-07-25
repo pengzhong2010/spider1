@@ -199,7 +199,7 @@ class Parse():
                         elif key == u'标签：':
                             spans = link.xpath('span/a/text()').extract()
                             if spans:
-                                info['tags'] = json.dumps(spans)
+                                info['tags'] = ';'.join(spans)
                                 # tags=spans[1]
 
             # "html":"<div class="PRF_modwrap S_line1 clearfix">
