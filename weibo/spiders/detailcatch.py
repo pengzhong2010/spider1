@@ -85,7 +85,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
             else:
 
                 self.detail_insert('')
-                time.sleep(1)
+                time.sleep(0.3)
 
 
                 # self.uid_listkey = self.uid_listkey + 1
