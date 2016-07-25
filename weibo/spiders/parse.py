@@ -6,8 +6,8 @@ from scrapy.http import HtmlResponse
 import re
 import datetime
 import time
-import sys
-sys.setrecursionlimit(1000000)
+# import sys
+# sys.setrecursionlimit(1000000)
 
 
 from rec_driver import *
@@ -70,7 +70,7 @@ class Parse():
         else:
             print sql
             print "sleeping"
-            time.sleep(20)
+            time.sleep(60)
             return self.select_uid_for_parse()
 
 
@@ -86,12 +86,12 @@ class Parse():
             if self.str_parse_tmp:
                 self.parse_text()
                 self.insert_uid_info()
-                return self.parse_go()
+                # return self.parse_go()
 
 
-            else:
-                # pass
-                return self.parse_go()
+            # else:
+            #     # pass
+            #     return self.parse_go()
 
 
     def parse_text(self):
@@ -349,7 +349,10 @@ class Parse():
 
 def main():
     tm = Parse()
-    tm.parse_go()
+    while 1:
+        tm.parse_go()
+
+
     # rm.test()
 
 if __name__ == "__main__":
