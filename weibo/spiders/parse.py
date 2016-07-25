@@ -7,7 +7,7 @@ import re
 import datetime
 import time
 import sys
-sys.setrecursionlimit(10000)
+sys.setrecursionlimit(1000000)
 
 
 from rec_driver import *
