@@ -65,6 +65,7 @@ class Parse():
                 res_id=i.get("id")
             return res_id
         else:
+            print "sleeping"
             time.sleep(60)
             return self.select_uid_for_parse()
 
@@ -74,6 +75,7 @@ class Parse():
         self.get_uid()
         # print self.id_run_tmp
         # print self.id_tmp
+
         if self.id_run_tmp:
             self.get_text()
 
@@ -84,7 +86,7 @@ class Parse():
 
 
             else:
-                pass
+                # pass
                 return self.parse_go()
 
 
