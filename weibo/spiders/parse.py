@@ -6,8 +6,8 @@ from scrapy.http import HtmlResponse
 import re
 import datetime
 import time
-# import sys
-# sys.setrecursionlimit(10000)
+import sys
+sys.setrecursionlimit(10000)
 
 
 from rec_driver import *
