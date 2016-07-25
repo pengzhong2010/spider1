@@ -66,7 +66,7 @@ class Parse():
             return res_id
         else:
             print "sleeping"
-            time.sleep(60)
+            time.sleep(20)
             return self.select_uid_for_parse()
 
 
