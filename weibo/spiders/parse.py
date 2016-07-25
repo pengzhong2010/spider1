@@ -318,10 +318,10 @@ class Parse():
             info_keys.append('regis_date')
             info_values.append(regis_date)
 
-        # time_int = time.mktime(datetime.datetime.now().timetuple())
-        # last_update_time= int(time_int)
-        # info_keys.append('last_update_time')
-        # info_values.append(last_update_time)
+        time_int = time.mktime(datetime.datetime.now().timetuple())
+        last_update_time= int(time_int)
+        info_keys.append('last_update_time')
+        info_values.append(last_update_time)
 
 
         t_tuple = tuple(info_values)
