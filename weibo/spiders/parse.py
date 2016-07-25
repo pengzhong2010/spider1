@@ -60,11 +60,12 @@ class Parse():
         ret = self.mysql_con.select(sql)
 
         if ret:
-            res_list_tmp = []
+            # res_list_tmp = []
             for i in ret:
                 res_id=i.get("id")
             return res_id
         else:
+            print sql
             print "sleeping"
             time.sleep(20)
             return self.select_uid_for_parse()
