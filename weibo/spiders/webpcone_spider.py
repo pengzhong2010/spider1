@@ -207,6 +207,14 @@ class WebpconeSpider(scrapy.spiders.Spider):
                     f.write(run_error_str)
                 return
 
+            m_url1 = re.match(r'.*(login.sina.com.cn/sso/login.php).*', response.url)
+            if m_url1:
+                str5 = m_url1.groups()[0]
+                run_error_str = run_error_str + "---" + str5
+                with open('run_page_error', 'ab') as f:
+                    f.write(run_error_str)
+                return
+
             with open('run_page_error', 'ab') as f:
                 f.write(run_error_str)
             time.sleep(1.3)

@@ -85,10 +85,19 @@ class DetailcatchSpider(scrapy.spiders.Spider):
             else:
                 time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
                 run_error_str = time_now + '---' + response.url + "---" + "out 2" + "\r\n"
+                #/login.sina.com.cn/sso/login.php
                 m_url = re.match(r'.*(https://passport.weibo.com/visitor/visitor).*', response.url)
                 if m_url:
                     str4 = m_url.groups()[0]
                     run_error_str = run_error_str + "---" + str4
+                    with open('run_page_error', 'ab') as f:
+                        f.write(run_error_str)
+                    return
+
+                m_url1 = re.match(r'.*(login.sina.com.cn/sso/login.php).*', response.url)
+                if m_url1:
+                    str5 = m_url1.groups()[0]
+                    run_error_str = run_error_str + "---" + str5
                     with open('run_page_error', 'ab') as f:
                         f.write(run_error_str)
                     return
