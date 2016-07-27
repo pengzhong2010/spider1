@@ -214,6 +214,14 @@ class WebpconeSpider(scrapy.spiders.Spider):
                 with open('run_page_error', 'ab') as f:
                     f.write(run_error_str)
                 return
+            #http://weibo.com/login?
+            m_url2 = re.match(r'.*(weibo.com/login).*', response.url)
+            if m_url2:
+                str6 = m_url2.groups()[0]
+                run_error_str = run_error_str + "---" + str6
+                with open('run_page_error', 'ab') as f:
+                    f.write(run_error_str)
+                return
 
             with open('run_page_error', 'ab') as f:
                 f.write(run_error_str)
