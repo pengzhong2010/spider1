@@ -55,6 +55,11 @@ class PyMysql:
     def select(self, sql, mode="many"):
         ret = None
         try:
+            if self._cursor is not None:
+                self._cursor.close()
+                self._cursor = None
+            self._cursor = self._conn.cursor(MySQLdb.cursors.DictCursor)
+
             self._cursor.execute(sql)
             if mode == "many":
                 ret = self._cursor.fetchall()
