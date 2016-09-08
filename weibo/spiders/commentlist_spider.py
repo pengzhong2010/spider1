@@ -23,10 +23,13 @@ class CommentlistSpider(scrapy.spiders.Spider):
     # start_urls=['http://m.weibo.cn']
     surl='http://weibo.com/xiaopapi/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'
 
+    spider_sep_per_time=3600
 
     mysql_con = ''
 
     my_cookies = {}
+    error_file_dir = "./error"
+    error_file = 'commentlist_error'
 
     def start_requests(self):
         cookies_list = conf1.MY_COOKIES.split('; ')
@@ -42,12 +45,11 @@ class CommentlistSpider(scrapy.spiders.Spider):
 
         self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
                                  conf1.MYSQL_DG_DB)
-
+        # print self.my_cookies
         return [scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies, callback=self.see_list
                                )]
 
     def see_list(self, response):
-
         # print 'url'
         # print response.url
         # print 'body'
@@ -56,7 +58,8 @@ class CommentlistSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
-
+        if not self.login_filter(response.url):
+            return
 
 
         # with open('commentlist', 'wb') as f:
@@ -125,7 +128,12 @@ class CommentlistSpider(scrapy.spiders.Spider):
                         blog_list.append(blog_dict)
                     # print blog_list
                     self.check_blog(blog_list)
-                return
+
+        self.rest()
+        return [
+            scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
+                           )]
+
 
 
     def check_blog(self,list):
@@ -160,4 +168,46 @@ class CommentlistSpider(scrapy.spiders.Spider):
 
                                 """
                     ret = self.mysql_con.excute(sql, "one", t_tuple)
+
                     # print ret
+
+    def rest(self):
+        time.sleep(self.spider_sep_per_time)
+
+    def login_filter(self, url):
+        if not os.path.exists(self.error_file_dir):
+            os.makedirs(self.error_file_dir)
+        time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
+        run_error_str = time_now + '---' + url + "---" + "login faild" + "\r\n"
+        m_url = re.match(r'.*(https://passport.weibo.com/visitor/visitor).*', url)
+        if m_url:
+            str4 = m_url.groups()[0]
+            run_error_str = run_error_str + "---" + str4
+            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
+                f.write(run_error_str)
+            return
+
+        m_url1 = re.match(r'.*(login.sina.com.cn/sso/login.php).*', url)
+        if m_url1:
+            str5 = m_url1.groups()[0]
+            run_error_str = run_error_str + "---" + str5
+            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
+                f.write(run_error_str)
+            return
+
+        m_url2 = re.match(r'.*(weibo.com/login).*', url)
+        if m_url2:
+            str6 = m_url2.groups()[0]
+            run_error_str = run_error_str + "---" + str6
+            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
+                f.write(run_error_str)
+            return
+        # login.sina.com.cn
+        m_url3 = re.match(r'.*(login.sina.com.cn).*', url)
+        if m_url3:
+            str7 = m_url3.groups()[0]
+            run_error_str = run_error_str + "---" + str7
+            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
+                f.write(run_error_str)
+            return
+        return True
