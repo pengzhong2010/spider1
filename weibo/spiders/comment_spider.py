@@ -36,6 +36,7 @@ class CommentSpider(scrapy.spiders.Spider):
     my_cookies = {}
     error_file_dir = "./error"
     error_file='comment_error'
+    appid = 1287792
 
     def start_requests(self):
         cookies_list = conf1.MY_COOKIES.split('; ')
@@ -255,7 +256,7 @@ class CommentSpider(scrapy.spiders.Spider):
                 pass
         return dict_tmp
     def get_blog_list(self):
-        sql = " select * from weibo_blog limit 20 "
+        sql = " select * from weibo_blog where appid = "+str(self.appid)
         ret = self.mysql_con.select(sql)
         if ret:
             self.blog_list=ret
@@ -270,8 +271,11 @@ class CommentSpider(scrapy.spiders.Spider):
         file_dir = "./comment_data"
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
+        if not os.path.exists(file_dir+'/'+date_now):
+            os.makedirs(file_dir+'/'+date_now)
+
         str1 = str(blog_id) +"\t"+ comment_id +"\t"+ comment_user_id +"\t"+ comment_text +"\t"+ str(datatime) + "\r\n"
-        with open(file_dir+'/'+date_now, 'ab') as f:
+        with open(file_dir+'/'+date_now+'/'+str(self.appid), 'ab') as f:
             f.write(str1)
 
 

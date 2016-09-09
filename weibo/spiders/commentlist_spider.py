@@ -30,6 +30,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
     my_cookies = {}
     error_file_dir = "./error"
     error_file = 'commentlist_error'
+    appid=1287792
 
     def start_requests(self):
         cookies_list = conf1.MY_COOKIES.split('; ')
@@ -156,15 +157,16 @@ class CommentlistSpider(scrapy.spiders.Spider):
                 b= blog_url and blog_create_time and blog_title
                 if b:
 
-                    t_tuple = tuple([blog_id, blog_url, blog_create_time, blog_title])
+                    t_tuple = tuple([blog_id, blog_url, blog_create_time, blog_title, self.appid])
 
                     sql = """
                                     insert into weibo_blog (
                                         blog_id,
                                         url,
                                         create_time,
-                                        title
-                                    ) values (%s,%s,%s,%s)
+                                        title,
+                                        appid
+                                    ) values (%s,%s,%s,%s,%s)
 
                                 """
                     ret = self.mysql_con.excute(sql, "one", t_tuple)
