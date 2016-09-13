@@ -256,7 +256,7 @@ class CommentSpider(scrapy.spiders.Spider):
                 pass
         return dict_tmp
     def get_blog_list(self):
-        sql = " select * from weibo_blog where appid = "+str(self.appid)
+        sql = " select * from weibo_blog where appid = "+str(self.appid)+" order by create_time desc limit 20"
         ret = self.mysql_con.select(sql)
         if ret:
             self.blog_list=ret
