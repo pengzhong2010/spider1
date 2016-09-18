@@ -125,10 +125,11 @@ class CommentallSpider(scrapy.spiders.Spider):
         res = json.loads(response.body)
         aa= res.get('data')
         page_total_dict=aa.get('page')
-        if page_total_dict:
-            page_total = page_total_dict.get('totalpage')
-            if page_total:
-                self.blog_comment_page_total = int(page_total)
+        if self.blog_comment_page_total == 1 :
+            if page_total_dict:
+                page_total = page_total_dict.get('totalpage')
+                if page_total:
+                    self.blog_comment_page_total = int(page_total)
         str1 = aa.get('html')
         # with open('commentpage2', 'wb') as f:
         #     f.write(str1)
