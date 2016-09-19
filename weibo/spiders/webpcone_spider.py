@@ -51,7 +51,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
 
     def start_requests(self):
 
-        cookies_list = conf1.PAPI_COOKIES.split('; ')
+        cookies_list = self.read_cookie().split('; ')
 
         for i in cookies_list:
             tmp = i.split('=')
@@ -144,6 +144,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
         self.next_page = self.next_page-1
         if self.next_page<1:
             self.next_page = 50
+            self.stay_cookie(response.request.headers.getlist('Cookie')[0])
             self.rest()
 
 
@@ -215,4 +216,21 @@ class WebpconeSpider(scrapy.spiders.Spider):
 
     def rest(self):
         time.sleep(self.spider_sep_per_time)
+
+    def stay_cookie(self, cookies_str):
+        file_dir = "./tmp"
+        if not os.path.exists(file_dir):
+            os.makedirs(file_dir)
+
+        with open(file_dir + '/' + str(self.name) + '_cookies', 'wb') as f:
+            f.write(cookies_str)
+
+    def read_cookie(self):
+        file_dir = "./tmp"
+        if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
+            f = open(file_dir + '/' + str(self.name) + '_cookies')
+            cookies_str = f.read()
+            if cookies_str:
+                return cookies_str
+        return conf1.PAPI_COOKIES
 

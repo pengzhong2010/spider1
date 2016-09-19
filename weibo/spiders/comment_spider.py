@@ -39,7 +39,7 @@ class CommentSpider(scrapy.spiders.Spider):
     appid = 1287792
 
     def start_requests(self):
-        cookies_list = conf1.MY_COOKIES.split('; ')
+        cookies_list = self.read_cookie().split('; ')
 
         for i in cookies_list:
             tmp = i.split('=')
@@ -75,7 +75,7 @@ class CommentSpider(scrapy.spiders.Spider):
 
 
         #db list one
-        blog_dict = self.get_blog_one()
+        blog_dict = self.get_blog_one(response.request.headers.getlist('Cookie')[0])
         if not blog_dict:
             return
         #catch
@@ -182,7 +182,7 @@ class CommentSpider(scrapy.spiders.Spider):
 
         #next blog
         # pass
-        blog_dict = self.get_blog_one()
+        blog_dict = self.get_blog_one(response.request.headers.getlist('Cookie')[0])
         if not blog_dict:
             return
         # catch
@@ -237,7 +237,7 @@ class CommentSpider(scrapy.spiders.Spider):
             return
         return True
 
-    def get_blog_one(self):
+    def get_blog_one(self,cookies_str):
         dict_tmp = {}
         if not self.blog_list:
             self.get_blog_list()
@@ -251,8 +251,9 @@ class CommentSpider(scrapy.spiders.Spider):
                 self.blog_list_len = 0
                 self.blog_list_key = 0
                 #sleep
+                self.stay_cookie(cookies_str)
                 self.rest()
-                return self.get_blog_one()
+                return self.get_blog_one(cookies_str)
                 pass
         return dict_tmp
     def get_blog_list(self):
@@ -277,6 +278,23 @@ class CommentSpider(scrapy.spiders.Spider):
         str1 = str(blog_id) +"\t"+ comment_id +"\t"+ comment_user_id +"\t"+ comment_text +"\t"+ str(datatime) + "\r\n"
         with open(file_dir+'/'+str(self.appid)+'/'+str(blog_id), 'ab') as f:
             f.write(str1)
+
+    def stay_cookie(self, cookies_str):
+        file_dir = "./tmp"
+        if not os.path.exists(file_dir):
+            os.makedirs(file_dir)
+
+        with open(file_dir + '/' + str(self.name) + '_cookies', 'wb') as f:
+            f.write(cookies_str)
+
+    def read_cookie(self):
+        file_dir = "./tmp"
+        if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
+            f = open(file_dir + '/' + str(self.name) + '_cookies')
+            cookies_str = f.read()
+            if cookies_str:
+                return cookies_str
+        return conf1.MY_COOKIES
 
 
 

@@ -33,8 +33,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
     appid=1287792
 
     def start_requests(self):
-        cookies_list = conf1.MY_COOKIES.split('; ')
-
+        cookies_list = self.read_cookie().split('; ')
         for i in cookies_list:
             tmp = i.split('=')
 
@@ -59,6 +58,11 @@ class CommentlistSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
+        # print 'cookies'
+        # print type(response.request.headers.getlist('Cookie')[0])
+        # print response.request.headers.getlist('Cookie')[0]
+        # return
+
         if not self.login_filter(response.url):
             return
 
@@ -130,6 +134,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
                     # print blog_list
                     self.check_blog(blog_list)
 
+        self.stay_cookie(response.request.headers.getlist('Cookie')[0])
         self.rest()
         return [
             scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
@@ -213,3 +218,20 @@ class CommentlistSpider(scrapy.spiders.Spider):
                 f.write(run_error_str)
             return
         return True
+
+    def stay_cookie(self,cookies_str):
+        file_dir = "./tmp"
+        if not os.path.exists(file_dir):
+            os.makedirs(file_dir)
+
+        with open(file_dir + '/' + str(self.name)+'_cookies', 'wb') as f:
+            f.write(cookies_str)
+
+    def read_cookie(self):
+        file_dir = "./tmp"
+        if os.path.exists(file_dir + '/' + str(self.name)+'_cookies'):
+            f = open(file_dir + '/' + str(self.name) + '_cookies')
+            cookies_str = f.read()
+            if cookies_str:
+                return cookies_str
+        return conf1.MY_COOKIES
