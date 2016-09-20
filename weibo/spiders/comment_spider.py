@@ -151,18 +151,24 @@ class CommentSpider(scrapy.spiders.Spider):
                                 comment_text = i
 
                     comment_user_id = ''
+                    comment_user_nickname = ''
                     a_list = link1.xpath('div[contains(@class, "list_con")]/div[contains(@class, "WB_text")]/a')
                     if a_list:
                         comment_user_id_list = a_list[0].xpath('@usercard').extract()
                         if comment_user_id_list:
                             comment_user_id_str = comment_user_id_list[0]
                             comment_user_id = comment_user_id_str[3:]
+
+                        comment_user_nickname_list = a_list[0].xpath('text()').extract()
+                        if comment_user_nickname_list:
+                            comment_user_nickname = comment_user_nickname_list[0]
+
                     # print self.blog_id
                     # print data_time
                     # print comment_id
                     # print comment_text
                     # print comment_user_id
-                    self.output_comment(self.blog_id, comment_id, comment_user_id, comment_text, data_time)
+                    self.output_comment(self.blog_id, comment_id, comment_user_id, comment_text, data_time, comment_user_nickname)
 
         link3 = list1[-1].xpath(
             'div[contains(@class, "list_con")]/div[contains(@class, "WB_func clearfix")]/div[contains(@class, "WB_from S_txt2")]/text()').extract()
@@ -267,7 +273,7 @@ class CommentSpider(scrapy.spiders.Spider):
     def rest(self):
         time.sleep(self.spider_sep_per_time)
 
-    def output_comment(self, blog_id, comment_id, comment_user_id, comment_text, datatime):
+    def output_comment(self, blog_id, comment_id, comment_user_id, comment_text, datatime, comment_user_nickname):
         date_now = time.strftime('%Y-%m-%d', time.gmtime(time.time()))
         file_dir = "./comment_data"
         if not os.path.exists(file_dir):
@@ -275,7 +281,7 @@ class CommentSpider(scrapy.spiders.Spider):
         if not os.path.exists(file_dir+'/'+str(self.appid)):
             os.makedirs(file_dir+'/'+str(self.appid))
 
-        str1 = str(blog_id) +"\t"+ comment_id +"\t"+ comment_user_id +"\t"+ comment_text +"\t"+ str(datatime) + "\r\n"
+        str1 = str(blog_id) +"\t"+ comment_id +"\t"+ comment_user_id +"\t"+ comment_text +"\t"+ str(datatime) +"\t"+ comment_user_nickname + "\r\n"
         with open(file_dir+'/'+str(self.appid)+'/'+str(blog_id), 'ab') as f:
             f.write(str1)
 
