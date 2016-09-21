@@ -254,6 +254,7 @@ class Parse():
 
     def insert_uid_info(self):
         id = self.id_run_tmp
+        print id
         if not id :
             return
 
