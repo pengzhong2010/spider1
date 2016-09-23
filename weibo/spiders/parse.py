@@ -53,7 +53,7 @@ class Parse():
         if not self.id_tmp:
             sql = """
                 select id from weibo_fensi_info
-                    where last_update_time = 0 and id >1857334
+                    where last_update_time = 0 and id >1955793
                     order by id
                     limit 1
                 """
