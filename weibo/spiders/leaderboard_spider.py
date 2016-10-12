@@ -136,40 +136,46 @@ class LeaderboardSpider(scrapy.spiders.Spider):
                     str2 = m2.groups()[0]
                     str2 = str2.replace('\\', '')
 
-                    fl_forward_num = 0
                     list3 = Selector(text=str2).xpath(
-                        '//a[contains(@action-type, "fl_forward")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
-                    if len(list3) == 2:
-                        fl_forward = list3[1]
-                        fl_forward_text = fl_forward.xpath('text()').extract()
-                        if fl_forward_text:
-                            fl_forward_num = int(fl_forward_text[0])
+                        '//ul[contains(@class, "WB_row_line WB_row_r4 clearfix S_line2")]')
+                    if list3:
+                        list4 = list3[0].xpath('li')
+                        if len(list4) == 4:
+                            fl_forward_num = 0
+                            list5 = list4[1].xpath(
+                                '//a[contains(@action-type, "fl_forward")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
+                            if len(list5) == 2:
+                                fl_forward = list5[1]
+                                fl_forward_text = fl_forward.xpath('text()').extract()
+                                if fl_forward_text:
+                                    fl_forward_num = int(fl_forward_text[0])
 
-                    fl_comment_num = 0
-                    list4 = Selector(text=str2).xpath(
-                        '//a[contains(@action-type, "fl_comment")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
-                    if len(list4) == 2:
-                        fl_comment = list4[1]
-                        fl_comment_text = fl_comment.xpath('text()').extract()
-                        if fl_comment_text:
-                            fl_comment_num = int(fl_comment_text[0])
+                            fl_comment_num = 0
+                            list6 = list4[2].xpath(
+                                '//a[contains(@action-type, "fl_comment")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
+                            if len(list6) == 2:
+                                fl_comment = list6[1]
+                                fl_comment_text = fl_comment.xpath('text()').extract()
+                                if fl_comment_text:
+                                    fl_comment_num = int(fl_comment_text[0])
 
-                    fl_like_num = 0
-                    list5 = Selector(text=str2).xpath(
-                        '//a[contains(@action-type, "fl_like")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
-                    if len(list5) == 2:
-                        fl_like = list5[1]
-                        fl_like_text = fl_like.xpath('text()').extract()
-                        if fl_like_text:
-                            fl_like_num = int(fl_like_text[0])
+                            fl_like_num = 0
+                            list7 = list4[3].xpath(
+                                '//a[contains(@action-type, "login")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]')
+                            if len(list7) == 2:
+                                fl_like_list = list7[1].xpath('span/em')
+                                if len(fl_like_list) == 2:
+                                    fl_like_text = fl_like_list[1].xpath('text()').extract()
+                                if fl_like_text:
+                                    fl_like_num = int(fl_like_text[0])
 
-                    # print self.blog_id
-                    # print fl_forward_num
-                    # print fl_comment_num
-                    # print fl_like_num
-                    # print day_int_now
+                            # print self.blog_id
+                            # print fl_forward_num
+                            # print fl_comment_num
+                            # print fl_like_num
+                            # print day_int_now
 
-                    self.update_blog_info(self.blog_id, fl_forward_num, fl_comment_num, fl_like_num, day_int_now)
+                            self.update_blog_info(self.blog_id, fl_forward_num, fl_comment_num, fl_like_num, day_int_now)
         # return
 
 
@@ -279,6 +285,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
         t_tuple = tuple([fl_forward_num, fl_comment_num, fl_like_num, day_int_now, blog_id])
 
         sql = "update weibo_blog set forward_count = %s , comment_count = %s , dianzan_count = %s , last_update_time = %s where blog_id = %s"
+        # print sql
         ret = self.mysql_con.excute(sql, "one", t_tuple)
 
         # print ret
