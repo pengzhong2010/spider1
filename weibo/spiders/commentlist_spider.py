@@ -67,8 +67,10 @@ class CommentlistSpider(scrapy.spiders.Spider):
             return
 
 
-        # with open('commentlist', 'wb') as f:
+        # with open('commentlist1', 'wb') as f:
         #     f.write(response.body)
+        # return
+
         str1 = response.body
         str1 = str1.replace('\r\n', '')
         str1 = str1.replace('\t', '')
@@ -78,8 +80,11 @@ class CommentlistSpider(scrapy.spiders.Spider):
         list1 = Selector(text=str1).xpath('//script/text()').extract()
         for str_html in list1:
             tag = 'FM.view({"ns":"pl.content.homeFeed.index","domid":"Pl_Official_MyProfileFeed__24"'
+            # m4 = re.match(
+            #     r'.*FM.view\(\{\"ns\":\"pl\.content\.homeFeed\.index\",\"domid\":\"Pl_Official_MyProfileFeed__24\"(.*)',
+            #     str_html)
             m4 = re.match(
-                r'.*FM.view\(\{\"ns\":\"pl\.content\.homeFeed\.index\",\"domid\":\"Pl_Official_MyProfileFeed__24\"(.*)',
+                r'.*FM.view\(\{\"ns\":\"pl\.content\.homeFeed\.index\",\"domid\":\"Pl_Official_MyProfileFeed__36\"(.*)',
                 str_html)
             if m4:
                 m2 = re.match(r'.*\"html\":\"(.*)', str_html)

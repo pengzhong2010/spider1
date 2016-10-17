@@ -315,11 +315,11 @@ class LeaderboardSpider(scrapy.spiders.Spider):
             if cookies_str:
                 return cookies_str
 
-        if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
-            f = open(file_dir + '/' + str(self.name) + '_cookies')
-            cookies_str = f.read()
-            if cookies_str:
-                return cookies_str
+        # if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
+        #     f = open(file_dir + '/' + str(self.name) + '_cookies')
+        #     cookies_str = f.read()
+        #     if cookies_str:
+        #         return cookies_str
         return conf1.MY_COOKIES
 
 
