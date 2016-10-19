@@ -24,7 +24,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
     # start_urls=['http://m.weibo.cn']
     surl = 'http://weibo.com/xiaopapi/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'
 
-    spider_sep_per_time = 86400
+    spider_sep_per_time = 10800
     blog_list=''
     blog_list_key=0
     blog_list_len = 0
@@ -259,7 +259,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
         # self.comment_page = 1
         # next_url = self.url_page_demo + str(self.comment_page)
         next_url = 'http://weibo.com' + str(blog_dict['url'])
-
+        time.sleep(3)
         return [
             scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True,
                            callback=self.page_parse
@@ -365,20 +365,29 @@ class LeaderboardSpider(scrapy.spiders.Spider):
         with open(file_dir + '/' + str(self.name) + '_cookies', 'wb') as f:
             f.write(cookies_str)
 
+    # def read_cookie(self):
+    #     file_dir = "./tmp"
+    #     cookies_file_name = 'commentlist'
+    #     if os.path.exists(file_dir + '/' + cookies_file_name + '_cookies'):
+    #         f = open(file_dir + '/' + cookies_file_name + '_cookies')
+    #         cookies_str = f.read()
+    #         if cookies_str:
+    #             return cookies_str
+    #
+    #     # if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
+    #     #     f = open(file_dir + '/' + str(self.name) + '_cookies')
+    #     #     cookies_str = f.read()
+    #     #     if cookies_str:
+    #     #         return cookies_str
+    #     return conf1.MY_COOKIES
+
     def read_cookie(self):
         file_dir = "./tmp"
-        cookies_file_name = 'commentlist'
-        if os.path.exists(file_dir + '/' + cookies_file_name + '_cookies'):
-            f = open(file_dir + '/' + cookies_file_name + '_cookies')
+        if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
+            f = open(file_dir + '/' + str(self.name) + '_cookies')
             cookies_str = f.read()
             if cookies_str:
                 return cookies_str
-
-        # if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
-        #     f = open(file_dir + '/' + str(self.name) + '_cookies')
-        #     cookies_str = f.read()
-        #     if cookies_str:
-        #         return cookies_str
         return conf1.MY_COOKIES
 
 
