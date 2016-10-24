@@ -137,6 +137,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
                         blog_dict['create_time'] = date_tmp
                         blog_dict['title'] = title_tmp
                         blog_list.append(blog_dict)
+                        # print blog_dict
                     # print blog_list
 
                     self.check_blog(blog_list)
@@ -194,6 +195,8 @@ class CommentlistSpider(scrapy.spiders.Spider):
                         blog_dict['create_time'] = date_tmp
                         blog_dict['title'] = title_tmp
                         blog_list.append(blog_dict)
+
+                        # print blog_dict
                     # print blog_list
 
                     self.check_blog(blog_list)

@@ -24,7 +24,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
     # start_urls=['http://m.weibo.cn']
     surl = 'http://weibo.com/xiaopapi/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'
 
-    spider_sep_per_time = 10800
+    spider_sep_per_time = 7200
     blog_list=''
     blog_list_key=0
     blog_list_len = 0
@@ -175,8 +175,17 @@ class LeaderboardSpider(scrapy.spiders.Spider):
                                 '//a[contains(@action-type, "fl_like")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
                             if len(fl_like_list) == 2:
                                 fl_like_text = fl_like_list[1].xpath('text()').extract()
-                            if fl_like_text:
-                                fl_like_num = int(fl_like_text[0])
+                                if fl_like_text:
+                                    fl_like_num = int(fl_like_text[0])
+                            else:
+                                list7 = list4[3].xpath(
+                                    '//a[contains(@action-type, "login")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]')
+                                if len(list7) == 2:
+                                    fl_like_list = list7[1].xpath('span/em')
+                                    if len(fl_like_list) == 2:
+                                        fl_like_text = fl_like_list[1].xpath('text()').extract()
+                                    if fl_like_text:
+                                        fl_like_num = int(fl_like_text[0])
 
                             # print self.blog_id
                             # print fl_forward_num
@@ -233,8 +242,17 @@ class LeaderboardSpider(scrapy.spiders.Spider):
                                 '//a[contains(@action-type, "fl_like")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
                             if len(fl_like_list) == 2:
                                 fl_like_text = fl_like_list[1].xpath('text()').extract()
-                            if fl_like_text:
-                                fl_like_num = int(fl_like_text[0])
+                                if fl_like_text:
+                                    fl_like_num = int(fl_like_text[0])
+                            else:
+                                list7 = list4[3].xpath(
+                                    '//a[contains(@action-type, "login")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]')
+                                if len(list7) == 2:
+                                    fl_like_list = list7[1].xpath('span/em')
+                                    if len(fl_like_list) == 2:
+                                        fl_like_text = fl_like_list[1].xpath('text()').extract()
+                                    if fl_like_text:
+                                        fl_like_num = int(fl_like_text[0])
 
                             # print self.blog_id
                             # print fl_forward_num
