@@ -21,7 +21,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
     name = "webpcone"
     allowed_domains = ['weibo.com', 'weibo.cn', 'sina.com.cn']
     # start_urls=['http://m.weibo.cn']
-    spider_sep_per_time = 300
+    spider_sep_per_time = 1500
 
     surl = 'http://weibo.com/2714280233/follow?from=page_100505&wvr=6&mod=headfollow#place'
     page_search_url = ''
@@ -151,7 +151,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
         next_url = 'http://weibo.com/p/1005052714280233/myfollow?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__93_page='+str(self.next_page)+'#Pl_Official_RelationFans__93'
         # print 'next_url'
         # print self.next_page
-        time.sleep(1.3)
+        time.sleep(2.3)
         return [scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
                            )]
 
