@@ -10,12 +10,8 @@ from rec_driver import *
 # from pyredis import RedisKv
 
 from pymysql import PyMysql
+import common
 
-
-# surl
-# start_search_page,end_search_page
-# url_fans
-# my_cookies
 
 class CommentlistSpider(scrapy.spiders.Spider):
     name = "commentlist"
@@ -28,12 +24,17 @@ class CommentlistSpider(scrapy.spiders.Spider):
     mysql_con = ''
 
     my_cookies = {}
-    error_file_dir = "./error"
-    error_file = 'commentlist_error'
+    error_file_dir = ""
+    error_file = ''
     appid=1287792
 
+    def shell_init(self):
+        self.error_file_dir = conf1.error_file_dir
+        self.error_file = self.name + '_error'
+
     def start_requests(self):
-        cookies_list = self.read_cookie().split('; ')
+        self.shell_init()
+        cookies_list = common.read_cookie(self.name, conf1.MY_COOKIES).split('; ')
         for i in cookies_list:
             tmp = i.split('=')
 
@@ -63,8 +64,9 @@ class CommentlistSpider(scrapy.spiders.Spider):
         # print response.request.headers.getlist('Cookie')[0]
         # return
 
-        if not self.login_filter(response.url):
+        if not common.login_filter(self.error_file_dir, self.error_file, response.url):
             return
+        common.stay_cookie(self.name, response.request.headers.getlist('Cookie')[0])
 
 
         # with open('commentlist1', 'wb') as f:
@@ -202,10 +204,11 @@ class CommentlistSpider(scrapy.spiders.Spider):
                     self.check_blog(blog_list)
 
         if not blog_list:
-            self.catch_filter(response.url)
+            common.catch_filter(self.error_file_dir, self.error_file, response.url)
 
-        self.stay_cookie(response.request.headers.getlist('Cookie')[0])
-        self.rest()
+        # common.stay_cookie(self.name, response.request.headers.getlist('Cookie')[0])
+        common.rest(self.spider_sep_per_time)
+
         return [
             scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
                            )]
@@ -248,71 +251,10 @@ class CommentlistSpider(scrapy.spiders.Spider):
 
                     # print ret
 
-    def rest(self):
-        time.sleep(self.spider_sep_per_time)
 
-    def login_filter(self, url):
-        if not os.path.exists(self.error_file_dir):
-            os.makedirs(self.error_file_dir)
-        time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-        run_error_str = time_now + '---' + url + "---" + "login faild" + "\r\n"
-        m_url = re.match(r'.*(https://passport.weibo.com/visitor/visitor).*', url)
-        if m_url:
-            str4 = m_url.groups()[0]
-            run_error_str = run_error_str + "---" + str4
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
 
-        m_url1 = re.match(r'.*(login.sina.com.cn/sso/login.php).*', url)
-        if m_url1:
-            str5 = m_url1.groups()[0]
-            run_error_str = run_error_str + "---" + str5
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
 
-        m_url2 = re.match(r'.*(weibo.com/login).*', url)
-        if m_url2:
-            str6 = m_url2.groups()[0]
-            run_error_str = run_error_str + "---" + str6
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-        # login.sina.com.cn
-        m_url3 = re.match(r'.*(login.sina.com.cn).*', url)
-        if m_url3:
-            str7 = m_url3.groups()[0]
-            run_error_str = run_error_str + "---" + str7
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-        return True
 
-    def catch_filter(self, url):
-        if not os.path.exists(self.error_file_dir):
-            os.makedirs(self.error_file_dir)
-        time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-        run_error_str = time_now + '---' + url + "---" + "catch faild" + "\r\n"
-        str4 = 'catch nothing'
-        run_error_str = run_error_str + "---" + str4
-        with open(self.error_file_dir + '/' + self.error_file, 'ab') as f:
-            f.write(run_error_str)
-        return
 
-    def stay_cookie(self,cookies_str):
-        file_dir = "./tmp"
-        if not os.path.exists(file_dir):
-            os.makedirs(file_dir)
 
-        with open(file_dir + '/' + str(self.name)+'_cookies', 'wb') as f:
-            f.write(cookies_str)
 
-    def read_cookie(self):
-        file_dir = "./tmp"
-        if os.path.exists(file_dir + '/' + str(self.name)+'_cookies'):
-            f = open(file_dir + '/' + str(self.name) + '_cookies')
-            cookies_str = f.read()
-            if cookies_str:
-                return cookies_str
-        return conf1.MY_COOKIES

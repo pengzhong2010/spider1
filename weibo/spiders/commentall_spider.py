@@ -11,12 +11,8 @@ from rec_driver import *
 # from pyredis import RedisKv
 
 from pymysql import PyMysql
+import common
 
-
-# surl
-# start_search_page,end_search_page
-# url_fans
-# my_cookies
 
 class CommentallSpider(scrapy.spiders.Spider):
     name = "commentall"
@@ -36,11 +32,16 @@ class CommentallSpider(scrapy.spiders.Spider):
 
     mysql_con = ''
     my_cookies = {}
-    error_file_dir = "./error"
-    error_file='comment_error'
+    error_file_dir = ""
+    error_file=''
     appid = 1287792
 
+    def shell_init(self):
+        self.error_file_dir = conf1.error_file_dir
+        self.error_file = self.name + '_error'
+
     def start_requests(self):
+        self.shell_init()
         cookies_list = conf1.MY_COOKIES.split('; ')
 
         for i in cookies_list:
@@ -72,7 +73,7 @@ class CommentallSpider(scrapy.spiders.Spider):
         #     f.write(response.body)
 
         #login 过滤
-        if not self.login_filter(response.url):
+        if not common.login_filter(self.error_file_dir, self.error_file, response.url):
             return
 
 
@@ -99,7 +100,7 @@ class CommentallSpider(scrapy.spiders.Spider):
 
     def page_parse(self, response):
 
-        if not self.login_filter(response.url):
+        if not common.login_filter(self.error_file_dir, self.error_file, response.url):
             return
 
         # print 'url'
@@ -205,7 +206,7 @@ class CommentallSpider(scrapy.spiders.Spider):
                 # print comment_id
                 # print comment_text
                 # print comment_user_id
-                self.output_comment(self.blog_id, comment_id, comment_user_id, comment_text, data_time, comment_user_nickname)
+                common.output_comment(self.blog_id, comment_id, comment_user_id, comment_text, data_time, comment_user_nickname, self.appid)
 
 
         self.comment_page = self.comment_page + 1
@@ -239,43 +240,7 @@ class CommentallSpider(scrapy.spiders.Spider):
 
 
 
-    def login_filter(self,url):
-        if not os.path.exists(self.error_file_dir):
-            os.makedirs(self.error_file_dir)
-        time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-        run_error_str = time_now + '---' + url + "---" + "login faild" + "\r\n"
-        m_url = re.match(r'.*(https://passport.weibo.com/visitor/visitor).*', url)
-        if m_url:
-            str4 = m_url.groups()[0]
-            run_error_str = run_error_str + "---" + str4
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
 
-        m_url1 = re.match(r'.*(login.sina.com.cn/sso/login.php).*', url)
-        if m_url1:
-            str5 = m_url1.groups()[0]
-            run_error_str = run_error_str + "---" + str5
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-
-        m_url2 = re.match(r'.*(weibo.com/login).*', url)
-        if m_url2:
-            str6 = m_url2.groups()[0]
-            run_error_str = run_error_str + "---" + str6
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-        # login.sina.com.cn
-        m_url3 = re.match(r'.*(login.sina.com.cn).*', url)
-        if m_url3:
-            str7 = m_url3.groups()[0]
-            run_error_str = run_error_str + "---" + str7
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-        return True
 
     def get_blog_one(self):
         dict_tmp = {}
@@ -306,17 +271,7 @@ class CommentallSpider(scrapy.spiders.Spider):
     # def rest(self):
     #     time.sleep(self.spider_sep_per_time)
 
-    def output_comment(self, blog_id, comment_id, comment_user_id, comment_text, datatime, comment_user_nickname):
-        date_now = time.strftime('%Y-%m-%d', time.gmtime(time.time()))
-        file_dir = "./comment_data"
-        if not os.path.exists(file_dir):
-            os.makedirs(file_dir)
-        if not os.path.exists(file_dir+'/'+str(self.appid)):
-            os.makedirs(file_dir+'/'+str(self.appid))
 
-        str1 = str(blog_id) +"\t"+ comment_id +"\t"+ comment_user_id +"\t"+ comment_text +"\t"+ str(datatime) +"\t"+ comment_user_nickname + "\r\n"
-        with open(file_dir+'/'+str(self.appid)+'/'+str(blog_id), 'ab') as f:
-            f.write(str1)
 
 
 

@@ -11,7 +11,7 @@ from rec_driver import *
 # from pyredis import RedisKv
 
 from pymysql import PyMysql
-
+import common
 
 # surl
 # start_search_page,end_search_page
@@ -34,12 +34,17 @@ class CommentSpider(scrapy.spiders.Spider):
 
     mysql_con = ''
     my_cookies = {}
-    error_file_dir = "./error"
-    error_file='comment_error'
+    error_file_dir = ""
+    error_file=''
     appid = 1287792
 
+    def shell_init(self):
+        self.error_file_dir = conf1.error_file_dir
+        self.error_file = self.name + '_error'
+
     def start_requests(self):
-        cookies_list = self.read_cookie().split('; ')
+        self.shell_init()
+        cookies_list = common.read_cookie(self.name, conf1.MY_COOKIES).split('; ')
 
         for i in cookies_list:
             tmp = i.split('=')
@@ -70,7 +75,7 @@ class CommentSpider(scrapy.spiders.Spider):
         #     f.write(response.body)
 
         #login 过滤
-        if not self.login_filter(response.url):
+        if not common.login_filter(self.error_file_dir, self.error_file, response.url):
             return
 
 
@@ -96,8 +101,9 @@ class CommentSpider(scrapy.spiders.Spider):
 
     def page_parse(self, response):
 
-        if not self.login_filter(response.url):
+        if not common.login_filter(self.error_file_dir, self.error_file, response.url):
             return
+        common.stay_cookie(self.name, response.request.headers.getlist('Cookie')[0])
 
         # print 'url'
         # print response.url
@@ -168,7 +174,7 @@ class CommentSpider(scrapy.spiders.Spider):
                     # print comment_id
                     # print comment_text
                     # print comment_user_id
-                    self.output_comment(self.blog_id, comment_id, comment_user_id, comment_text, data_time, comment_user_nickname)
+                    common.output_comment(self.blog_id, comment_id, comment_user_id, comment_text, data_time, comment_user_nickname, self.appid)
 
         link3 = list1[-1].xpath(
             'div[contains(@class, "list_con")]/div[contains(@class, "WB_func clearfix")]/div[contains(@class, "WB_from S_txt2")]/text()').extract()
@@ -205,43 +211,7 @@ class CommentSpider(scrapy.spiders.Spider):
 
 
 
-    def login_filter(self,url):
-        if not os.path.exists(self.error_file_dir):
-            os.makedirs(self.error_file_dir)
-        time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-        run_error_str = time_now + '---' + url + "---" + "login faild" + "\r\n"
-        m_url = re.match(r'.*(https://passport.weibo.com/visitor/visitor).*', url)
-        if m_url:
-            str4 = m_url.groups()[0]
-            run_error_str = run_error_str + "---" + str4
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
 
-        m_url1 = re.match(r'.*(login.sina.com.cn/sso/login.php).*', url)
-        if m_url1:
-            str5 = m_url1.groups()[0]
-            run_error_str = run_error_str + "---" + str5
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-
-        m_url2 = re.match(r'.*(weibo.com/login).*', url)
-        if m_url2:
-            str6 = m_url2.groups()[0]
-            run_error_str = run_error_str + "---" + str6
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-        # login.sina.com.cn
-        m_url3 = re.match(r'.*(login.sina.com.cn).*', url)
-        if m_url3:
-            str7 = m_url3.groups()[0]
-            run_error_str = run_error_str + "---" + str7
-            with open(self.error_file_dir+'/'+self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-        return True
 
     def get_blog_one(self,cookies_str):
         dict_tmp = {}
@@ -257,8 +227,7 @@ class CommentSpider(scrapy.spiders.Spider):
                 self.blog_list_len = 0
                 self.blog_list_key = 0
                 #sleep
-                self.stay_cookie(cookies_str)
-                self.rest()
+                common.rest(self.spider_sep_per_time)
                 return self.get_blog_one(cookies_str)
                 pass
         return dict_tmp
@@ -270,37 +239,11 @@ class CommentSpider(scrapy.spiders.Spider):
             self.blog_list_len=len(ret)
 
 
-    def rest(self):
-        time.sleep(self.spider_sep_per_time)
 
-    def output_comment(self, blog_id, comment_id, comment_user_id, comment_text, datatime, comment_user_nickname):
-        date_now = time.strftime('%Y-%m-%d', time.gmtime(time.time()))
-        file_dir = "./comment_data"
-        if not os.path.exists(file_dir):
-            os.makedirs(file_dir)
-        if not os.path.exists(file_dir+'/'+str(self.appid)):
-            os.makedirs(file_dir+'/'+str(self.appid))
 
-        str1 = str(blog_id) +"\t"+ comment_id +"\t"+ comment_user_id +"\t"+ comment_text +"\t"+ str(datatime) +"\t"+ comment_user_nickname + "\r\n"
-        with open(file_dir+'/'+str(self.appid)+'/'+str(blog_id), 'ab') as f:
-            f.write(str1)
 
-    def stay_cookie(self, cookies_str):
-        file_dir = "./tmp"
-        if not os.path.exists(file_dir):
-            os.makedirs(file_dir)
 
-        with open(file_dir + '/' + str(self.name) + '_cookies', 'wb') as f:
-            f.write(cookies_str)
 
-    def read_cookie(self):
-        file_dir = "./tmp"
-        if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
-            f = open(file_dir + '/' + str(self.name) + '_cookies')
-            cookies_str = f.read()
-            if cookies_str:
-                return cookies_str
-        return conf1.MY_COOKIES
 
 
 

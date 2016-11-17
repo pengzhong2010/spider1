@@ -11,6 +11,7 @@ from rec_driver import *
 # from pyredis import RedisKv
 
 from pymysql import PyMysql
+import common
 
 
 class DetailcatchSpider(scrapy.spiders.Spider):
@@ -28,13 +29,17 @@ class DetailcatchSpider(scrapy.spiders.Spider):
     mysql_con = ''
     my_cookies={}
 
-    error_file_dir = "./error"
-    error_file = 'detailcatch_error'
+    error_file_dir = ""
+    error_file = ''
     appid = 1287792
 
+    def shell_init(self):
+        self.error_file_dir = conf1.error_file_dir
+        self.error_file = self.name + '_error'
 
     def start_requests(self):
-        cookies_list = self.read_cookie().split('; ')
+        self.shell_init()
+        cookies_list = common.read_cookie(self.name, conf1.MY_COOKIES).split('; ')
 
         for i in cookies_list:
             tmp = i.split('=')
@@ -62,8 +67,9 @@ class DetailcatchSpider(scrapy.spiders.Spider):
         # return
         # print response.meta['cookiejar']
 
-        if not self.login_filter(response.url):
+        if not common.login_filter(self.error_file_dir, self.error_file, response.url):
             return
+        common.stay_cookie(self.name, response.request.headers.getlist('Cookie')[0])
 
 
         if self.detail_catching:
@@ -82,9 +88,12 @@ class DetailcatchSpider(scrapy.spiders.Spider):
 
             if m1:
                 str2= m1.groups()[0]
+                # with open('u_detail_tmp', 'wb') as f:
+                #     f.write(str2)
 
                 if str2:
                     pinfo = self.parse_text(str2)
+                    # print pinfo
                     if pinfo:
                         self.fans_info_update(pinfo)
                     else:
@@ -93,7 +102,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
                     self.fans_info_update_time()
             else:
                 self.fans_info_update_time()
-
+            # return
 
                 # self.detail_insert(str2)
 
@@ -103,13 +112,10 @@ class DetailcatchSpider(scrapy.spiders.Spider):
             time.sleep(1.3)
             self.detail_catching = 1
             self.get_uid_info()
-            # print self.uid_info
+            # self.uid_info = {'id': 3203330L, 'uid': 5994845281L}
+
             if self.uid_info.get('uid'):
-                # print self.uid_info.get('uid')
-                # url_tmp='http://weibo.com/'+str(self.uid_info.get('uid'))+'/profile?topnav=1&wvr=6&is_all=1'
                 url_tmp='http://weibo.com/p/100505'+str(self.uid_info.get('uid'))+'/info?mod=pedit_more'
-                # print url_tmp
-                # return
 
                 return [
                     scrapy.Request(url=url_tmp, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_home
@@ -275,6 +281,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
                 str3 = m3.groups()[0]
                 # print str3
                 list2 = Selector(text=str3).xpath('//p[contains(@class, "level_info")]/span')
+                # print list2.extract()
                 for index, link in enumerate(list2):
                     x1 = link.xpath('text()').extract()
                     x2 = link.xpath('span/text()').extract()
@@ -282,9 +289,10 @@ class DetailcatchSpider(scrapy.spiders.Spider):
                     # print x1[0]
                     # print x2[0]
                     if x1[0] == u' 当前等级： ':
-                        m3_1 = re.match(r'.*([\d]+).*', str1)
+                        m3_1 = re.match(r'.*([\d]+).*', x2[0])
                         if m3_1:
                             info['weibo_level'] = m3_1.groups()[0]
+                            # print m3_1.groups()
 
                     elif x1[0] == u' 经验值： ':
                         info['exp_value'] = x2[0]
@@ -293,15 +301,21 @@ class DetailcatchSpider(scrapy.spiders.Spider):
                         # print list2
 
             # "html":"<div class="WB_cardwrap S_bg2" >
-            m4 = re.match(r'.*\"html\":\"\<div class=\"WB_cardwrap S_bg2\" \>(.*)', str1)
+            # print 123123
+            #<div class="WB_cardwrap S_bg2" ><div class="PCD_counter">
+            m4 = re.match(r'.*\"html\":\"\<div class=\"WB_cardwrap S_bg2\" \>\<div class=\"PCD_counter\"\>(.*)', str1)
+            #Pl_Core_T8CustomTriColumn__55
+            # print m4.groups()
             if m4:
                 str4 = m4.groups()[0]
                 list4 = Selector(text=str4).xpath('//table[contains(@class, "tb_counter")]/tbody/tr/td/a')
-                # print list4.extract()
+
                 for index, link4 in enumerate(list4):
 
                     x1 = link4.xpath('span/text()').extract()
                     x2 = link4.xpath('strong/text()').extract()
+                    # print x1
+                    # print x2
 
                     if x1[0] == u'关注':
                         info['attr_count'] = x2[0]
@@ -309,7 +323,6 @@ class DetailcatchSpider(scrapy.spiders.Spider):
                         info['fensi_count'] = x2[0]
                     elif x1[0] == u'微博':
                         info['weibo_count'] = x2[0]
-
             # else:
             #     print "not match"
 
@@ -330,6 +343,10 @@ class DetailcatchSpider(scrapy.spiders.Spider):
         if nick_name:
             info_keys.append('nick_name')
             info_values.append(nick_name)
+        attr_count = info.get('attr_count')
+        if attr_count:
+            info_keys.append('attr_count')
+            info_values.append(int(attr_count))
         weibo_count = info.get('weibo_count')
         if weibo_count:
             info_keys.append('weibo_count')
@@ -393,6 +410,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
         info_keys.append('last_update_time')
         info_values.append(last_update_time)
 
+
         t_tuple = tuple(info_values)
         ss = ' = %s , '.join(info_keys)
         id = self.uid_info.get('id')
@@ -440,7 +458,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
         #     sql = "select id,uid from weibo_fensi_info where create_time = 0 and id > %d order by id limit 1 " % int(
         #         self.id_tmp)
         ret = self.mysql_con.select(sql)
-        print ret
+        # print ret
         if ret:
             uid_list_tmp = {}
             for i in ret:
@@ -449,52 +467,9 @@ class DetailcatchSpider(scrapy.spiders.Spider):
 
             return uid_list_tmp
         else:
+            print 'sleep'
             time.sleep(self.spider_sep_per_time)
             return self.select_uid_info()
 
-    def login_filter(self, url):
-        if not os.path.exists(self.error_file_dir):
-            os.makedirs(self.error_file_dir)
-        time_now = time.strftime('%Y-%m-%d %X', time.gmtime(time.time()))
-        run_error_str = time_now + '---' + url + "---" + "login faild" + "\r\n"
-        m_url = re.match(r'.*(https://passport.weibo.com/visitor/visitor).*', url)
-        if m_url:
-            str4 = m_url.groups()[0]
-            run_error_str = run_error_str + "---" + str4
-            with open(self.error_file_dir + '/' + self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
 
-        m_url1 = re.match(r'.*(login.sina.com.cn/sso/login.php).*', url)
-        if m_url1:
-            str5 = m_url1.groups()[0]
-            run_error_str = run_error_str + "---" + str5
-            with open(self.error_file_dir + '/' + self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
 
-        m_url2 = re.match(r'.*(weibo.com/login).*', url)
-        if m_url2:
-            str6 = m_url2.groups()[0]
-            run_error_str = run_error_str + "---" + str6
-            with open(self.error_file_dir + '/' + self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-        # login.sina.com.cn
-        m_url3 = re.match(r'.*(login.sina.com.cn).*', url)
-        if m_url3:
-            str7 = m_url3.groups()[0]
-            run_error_str = run_error_str + "---" + str7
-            with open(self.error_file_dir + '/' + self.error_file, 'ab') as f:
-                f.write(run_error_str)
-            return
-        return True
-
-    def read_cookie(self):
-        file_dir = "./tmp"
-        if os.path.exists(file_dir + '/' + str(self.name) + '_cookies'):
-            f = open(file_dir + '/' + str(self.name) + '_cookies')
-            cookies_str = f.read()
-            if cookies_str:
-                return cookies_str
-        return conf1.MY_COOKIES
