@@ -30,7 +30,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
     my_cookies = {}
     error_file_dir = ""
     error_file=''
-    cookies_user = conf1.MY_COOKIES
+    cookies_user = conf1.MY_COOKIES1
     appid = 1287792
 
     def shell_init(self):
@@ -53,7 +53,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
         self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
                                  conf1.MYSQL_DG_DB)
         # self.surl='http://weibo.com/2810373291/EdcVu08Rz?type=comment#_rnd1476759480516'
-        return [scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies, callback=self.see_home
+        return [scrapy.Request(url=self.surl, meta={'cookiejar': 4}, cookies=self.my_cookies, callback=self.see_home
                                )]
 
     def see_home(self, response):
@@ -89,7 +89,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
         next_url = 'http://weibo.com' + str(blog_dict['url'])
 
         return [
-            scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.page_parse
+            scrapy.Request(url=next_url, meta={'cookiejar': 4}, cookies=self.my_cookies, dont_filter=True, callback=self.page_parse
                            )]
 
 
@@ -282,7 +282,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
         next_url = 'http://weibo.com' + str(blog_dict['url'])
         time.sleep(3)
         return [
-            scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True,
+            scrapy.Request(url=next_url, meta={'cookiejar': 4}, cookies=self.my_cookies, dont_filter=True,
                            callback=self.page_parse
                            )]
 

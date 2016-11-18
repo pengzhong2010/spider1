@@ -31,7 +31,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
 
     error_file_dir = ""
     error_file = ''
-    cookies_user = conf1.MY_COOKIES
+    cookies_user = conf1.MY_COOKIES1
     appid = 1287792
 
     def shell_init(self):
@@ -110,7 +110,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
 
 
         if not self.detail_catching:
-            time.sleep(1.3)
+            time.sleep(2.3)
             self.detail_catching = 1
             self.get_uid_info()
             # self.uid_info = {'id': 3203330L, 'uid': 5994845281L}

@@ -26,7 +26,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
     my_cookies = {}
     error_file_dir = ""
     error_file = ''
-    cookies_user = conf1.MY_COOKIES
+    cookies_user = conf1.MY_COOKIES1
     appid=1287792
 
     def shell_init(self):
@@ -48,7 +48,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
         self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
                                  conf1.MYSQL_DG_DB)
         # print self.my_cookies
-        return [scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies, callback=self.see_list
+        return [scrapy.Request(url=self.surl, meta={'cookiejar': 2}, cookies=self.my_cookies, callback=self.see_list
                                )]
 
     def see_list(self, response):
@@ -211,7 +211,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
         common.rest(self.spider_sep_per_time)
 
         return [
-            scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
+            scrapy.Request(url=self.surl, meta={'cookiejar': 2}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
                            )]
 
 

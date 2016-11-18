@@ -41,7 +41,7 @@ class CommentSpider(scrapy.spiders.Spider):
     my_cookies = {}
     error_file_dir = ""
     error_file=''
-    cookies_user = conf1.MY_COOKIES
+    cookies_user = conf1.MY_COOKIES1
     appid = 1287792
 
     def shell_init(self):
@@ -63,7 +63,7 @@ class CommentSpider(scrapy.spiders.Spider):
 
         self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
                                  conf1.MYSQL_DG_DB)
-        return [scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies, callback=self.see_home
+        return [scrapy.Request(url=self.surl, meta={'cookiejar': 3}, cookies=self.my_cookies, callback=self.see_home
                                )]
 
     def see_home(self, response):
@@ -98,7 +98,7 @@ class CommentSpider(scrapy.spiders.Spider):
         next_url = self.url_page_demo + str(self.comment_page)
 
         return [
-            scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.page_parse
+            scrapy.Request(url=next_url, meta={'cookiejar': 3}, cookies=self.my_cookies, dont_filter=True, callback=self.page_parse
                            )]
 
 
@@ -194,9 +194,9 @@ class CommentSpider(scrapy.spiders.Spider):
                     # pass
                     self.comment_page = self.comment_page + 1
                     next_url = self.url_page_demo + str(self.comment_page)
-                    time.sleep(1)
+                    time.sleep(2)
                     return [
-                        scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True,
+                        scrapy.Request(url=next_url, meta={'cookiejar': 3}, cookies=self.my_cookies, dont_filter=True,
                                        callback=self.page_parse
                                        )]
 
@@ -212,9 +212,9 @@ class CommentSpider(scrapy.spiders.Spider):
         self.blog_id = blog_dict['blog_id']
         self.comment_page = 1
         next_url = self.url_page_demo + str(self.comment_page)
-        time.sleep(1)
+        time.sleep(2)
         return [
-            scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True,
+            scrapy.Request(url=next_url, meta={'cookiejar': 3}, cookies=self.my_cookies, dont_filter=True,
                            callback=self.page_parse
                            )]
 
