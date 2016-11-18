@@ -21,6 +21,10 @@ class WebpconeSpider(scrapy.spiders.Spider):
     spider_sep_per_time = 600
 
     surl = 'http://weibo.com/2714280233/follow?from=page_100505&wvr=6&mod=headfollow#place'
+    first_url_prefix = 'http://weibo.com/2714280233/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__103_page='
+    first_url_suffix = '#Pl_Official_RelationFans__103'
+    second_url_prefix = 'http://weibo.com/p/1005052714280233/myfollow?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__93_page='
+    second_url_suffix = '#Pl_Official_RelationFans__93'
 
     login_uid = 0
     uid_tmp_list = []
@@ -31,6 +35,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
     mysql_con = ''
     error_file_dir = ""
     error_file = ''
+    cookies_user=conf1.PAPI_COOKIES
 
     my_headers = {}
     my_cookies = {}
@@ -42,7 +47,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
     def start_requests(self):
         self.shell_init()
         self.next_page=self.largest_page
-        cookies_list = common.read_cookie(self.name, conf1.PAPI_COOKIES).split('; ')
+        cookies_list = common.read_cookie(self.name, self.cookies_user).split('; ')
 
         for i in cookies_list:
             tmp = i.split('=')
@@ -85,7 +90,8 @@ class WebpconeSpider(scrapy.spiders.Spider):
             self.login_uid = m1.groups()[0]
 
             # url_fans='http://weibo.com/' + str(self.login_uid) + '/fans?rightmod=1&wvr=6'
-            url_fans = 'http://weibo.com/2714280233/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__103_page='+str(self.largest_page)+'#Pl_Official_RelationFans__103'
+            #url_fans = 'http://weibo.com/2714280233/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__103_page='+str(self.largest_page)+'#Pl_Official_RelationFans__103'
+            url_fans = self.first_url_prefix+str(self.largest_page)+self.first_url_suffix
             # print "next_url"
             # print url_fans
 
@@ -141,7 +147,8 @@ class WebpconeSpider(scrapy.spiders.Spider):
             common.rest(self.spider_sep_per_time)
 
 
-        next_url = 'http://weibo.com/p/1005052714280233/myfollow?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__93_page='+str(self.next_page)+'#Pl_Official_RelationFans__93'
+        # next_url = 'http://weibo.com/p/1005052714280233/myfollow?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__93_page='+str(self.next_page)+'#Pl_Official_RelationFans__93'
+        next_url = self.second_url_prefix+str(self.next_page)+self.second_url_suffix
         # print 'next_url'
         # print self.next_page
         time.sleep(2.3)

@@ -26,6 +26,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
     my_cookies = {}
     error_file_dir = ""
     error_file = ''
+    cookies_user = conf1.MY_COOKIES
     appid=1287792
 
     def shell_init(self):
@@ -34,7 +35,7 @@ class CommentlistSpider(scrapy.spiders.Spider):
 
     def start_requests(self):
         self.shell_init()
-        cookies_list = common.read_cookie(self.name, conf1.MY_COOKIES).split('; ')
+        cookies_list = common.read_cookie(self.name, self.cookies_user).split('; ')
         for i in cookies_list:
             tmp = i.split('=')
 

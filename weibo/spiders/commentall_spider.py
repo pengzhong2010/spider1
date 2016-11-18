@@ -21,6 +21,11 @@ class CommentallSpider(scrapy.spiders.Spider):
     surl = 'http://weibo.com/xiaopapi/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'
 
     # spider_sep_per_time = 3600
+
+    first_url_prefix = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id='
+    first_url_suffix = '&page='
+
+
     blog_list=''
     blog_list_len=0
     blog_list_key=0
@@ -82,7 +87,8 @@ class CommentallSpider(scrapy.spiders.Spider):
         if not blog_dict:
             return
         #catch
-        self.url_page_demo = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id='+str(blog_dict['blog_id'])+'&page='
+        #self.url_page_demo = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id='+str(blog_dict['blog_id'])+'&page='
+        self.url_page_demo = self.first_url_prefix+str(blog_dict['blog_id'])+self.first_url_suffix
         # next_url='http://weibo.com'+str(blog_dict['url'])
         self.blog_id = blog_dict['blog_id']
         self.comment_page = 1
@@ -226,7 +232,8 @@ class CommentallSpider(scrapy.spiders.Spider):
             if not blog_dict:
                 return
             # catch
-            self.url_page_demo = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id=' + str(blog_dict['blog_id']) + '&page='
+            #self.url_page_demo = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id=' + str(blog_dict['blog_id']) + '&page='
+            self.url_page_demo = self.first_url_prefix + str(blog_dict['blog_id']) + self.first_url_suffix
             # next_url='http://weibo.com'+str(blog_dict['url'])
             self.blog_id = blog_dict['blog_id']
             self.comment_page = 1

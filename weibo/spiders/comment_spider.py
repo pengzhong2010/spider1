@@ -22,9 +22,14 @@ class CommentSpider(scrapy.spiders.Spider):
     name = "comment"
     allowed_domains = ['weibo.com', 'weibo.cn', 'sina.com.cn']
     # start_urls=['http://m.weibo.cn']
-    surl = 'http://weibo.com/xiaopapi/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'
 
     spider_sep_per_time = 3600
+
+    surl = 'http://weibo.com/xiaopapi/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1'
+
+    first_url_prefix = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id='
+    first_url_suffix = '&page='
+
     blog_list=''
     blog_list_len=0
     blog_list_key=0
@@ -36,6 +41,7 @@ class CommentSpider(scrapy.spiders.Spider):
     my_cookies = {}
     error_file_dir = ""
     error_file=''
+    cookies_user = conf1.MY_COOKIES
     appid = 1287792
 
     def shell_init(self):
@@ -44,7 +50,7 @@ class CommentSpider(scrapy.spiders.Spider):
 
     def start_requests(self):
         self.shell_init()
-        cookies_list = common.read_cookie(self.name, conf1.MY_COOKIES).split('; ')
+        cookies_list = common.read_cookie(self.name, self.cookies_user).split('; ')
 
         for i in cookies_list:
             tmp = i.split('=')
@@ -84,7 +90,8 @@ class CommentSpider(scrapy.spiders.Spider):
         if not blog_dict:
             return
         #catch
-        self.url_page_demo = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id='+str(blog_dict['blog_id'])+'&page='
+        #self.url_page_demo = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id='+str(blog_dict['blog_id'])+'&page='
+        self.url_page_demo = self.first_url_prefix+str(blog_dict['blog_id'])+self.first_url_suffix
         # next_url='http://weibo.com'+str(blog_dict['url'])
         self.blog_id = blog_dict['blog_id']
         self.comment_page = 1
@@ -176,21 +183,22 @@ class CommentSpider(scrapy.spiders.Spider):
                     # print comment_user_id
                     common.output_comment(self.blog_id, comment_id, comment_user_id, comment_text, data_time, comment_user_nickname, self.appid)
 
-        link3 = list1[-1].xpath(
-            'div[contains(@class, "list_con")]/div[contains(@class, "WB_func clearfix")]/div[contains(@class, "WB_from S_txt2")]/text()').extract()
-        if link3:
-            data_time_str = link3[0]
-            m1 = re.match(r'(.*' + u'分钟前' + '.*)', data_time_str)
-            if m1:
-                # next page
-                # pass
-                self.comment_page = self.comment_page + 1
-                next_url = self.url_page_demo + str(self.comment_page)
-                time.sleep(1)
-                return [
-                    scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True,
-                                   callback=self.page_parse
-                                   )]
+        if list1:
+            link3 = list1[-1].xpath(
+                'div[contains(@class, "list_con")]/div[contains(@class, "WB_func clearfix")]/div[contains(@class, "WB_from S_txt2")]/text()').extract()
+            if link3:
+                data_time_str = link3[0]
+                m1 = re.match(r'(.*' + u'分钟前' + '.*)', data_time_str)
+                if m1:
+                    # next page
+                    # pass
+                    self.comment_page = self.comment_page + 1
+                    next_url = self.url_page_demo + str(self.comment_page)
+                    time.sleep(1)
+                    return [
+                        scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True,
+                                       callback=self.page_parse
+                                       )]
 
         #next blog
         # pass
@@ -198,7 +206,8 @@ class CommentSpider(scrapy.spiders.Spider):
         if not blog_dict:
             return
         # catch
-        self.url_page_demo = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id=' + str(blog_dict['blog_id']) + '&page='
+        #self.url_page_demo = 'http://weibo.com/aj/v6/comment/big?ajwvr=6&id=' + str(blog_dict['blog_id']) + '&page='
+        self.url_page_demo = self.first_url_prefix + str(blog_dict['blog_id']) + self.first_url_suffix
         # next_url='http://weibo.com'+str(blog_dict['url'])
         self.blog_id = blog_dict['blog_id']
         self.comment_page = 1
