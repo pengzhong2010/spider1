@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import commentlist_spider
+from rec_driver import *
 
 class PapitubecommentlistSpider(commentlist_spider.CommentlistSpider):
     name = "papitubecommentlist"
@@ -14,4 +15,5 @@ class PapitubecommentlistSpider(commentlist_spider.CommentlistSpider):
     my_cookies = {}
     error_file_dir = ""
     error_file = ''
+    cookies_user = conf1.MY_COOKIES2
     appid = 2806796

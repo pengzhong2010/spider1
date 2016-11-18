@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import comment_spider
+from rec_driver import *
 
 class PapitubecommentSpider(comment_spider.CommentSpider):
     name = "papitubecomment"
@@ -20,4 +21,5 @@ class PapitubecommentSpider(comment_spider.CommentSpider):
     my_cookies = {}
     error_file_dir = ""
     error_file = ''
+    cookies_user = conf1.MY_COOKIES2
     appid = 2806796

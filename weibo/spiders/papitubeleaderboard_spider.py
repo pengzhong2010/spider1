@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import leaderboard_spider
+from rec_driver import *
 
 class PapitubeleaderboardSpider(leaderboard_spider.LeaderboardSpider):
     name = "papitubeleaderboard"
@@ -16,4 +17,5 @@ class PapitubeleaderboardSpider(leaderboard_spider.LeaderboardSpider):
     my_cookies = {}
     error_file_dir = ""
     error_file = ''
+    cookies_user = conf1.MY_COOKIES2
     appid = 2806796
