@@ -52,7 +52,7 @@ def login_filter(error_file_dir, error_file, url):
             f.write(run_error_str)
         return
 
-    m_url2 = re.match(r'.*(weibo.com/login).*', url)
+    m_url2 = re.match(r'.*(weibo\.com/login).*', url)
     if m_url2:
         str6 = m_url2.groups()[0]
         run_error_str = run_error_str + "---" + str6
@@ -60,7 +60,7 @@ def login_filter(error_file_dir, error_file, url):
             f.write(run_error_str)
         return
     # login.sina.com.cn
-    m_url3 = re.match(r'.*(login.sina.com.cn).*', url)
+    m_url3 = re.match(r'.*(login\.sina\.com\.cn).*', url)
     if m_url3:
         str7 = m_url3.groups()[0]
         run_error_str = run_error_str + "---" + str7
@@ -71,6 +71,20 @@ def login_filter(error_file_dir, error_file, url):
     if m_url4:
         str8 = m_url4.groups()[0]
         run_error_str = run_error_str + "---" + str8
+        with open(error_file_dir + '/' + error_file, 'ab') as f:
+            f.write(run_error_str)
+        return
+    m_url5 = re.match(r'.*(accessdeny).*', url)
+    if m_url5:
+        str1 = m_url5.groups()[0]
+        run_error_str = run_error_str + "---" + str1
+        with open(error_file_dir + '/' + error_file, 'ab') as f:
+            f.write(run_error_str)
+        return
+    m_url6 = re.match(r'.*(login\.php).*', url)
+    if m_url6:
+        str1 = m_url6.groups()[0]
+        run_error_str = run_error_str + "---" + str1
         with open(error_file_dir + '/' + error_file, 'ab') as f:
             f.write(run_error_str)
         return
