@@ -51,7 +51,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
         self.mysql_con = PyMysql(conf1.MYSQL_URL, conf1.MYSQL_PORT, conf1.MYSQL_USER, conf1.MYSQL_PASSWD,
                                  conf1.MYSQL_DG_DB)
 
-        return [scrapy.Request(url=self.surl, meta={'cookiejar': 0}, cookies=self.my_cookies,  callback=self.see_home
+        return [scrapy.Request(url=self.surl, meta={'cookiejar': 1}, cookies=self.my_cookies,  callback=self.see_home
                                )]
 
     def see_home(self, response):
@@ -119,7 +119,7 @@ class DetailcatchSpider(scrapy.spiders.Spider):
                 url_tmp='http://weibo.com/p/100505'+str(self.uid_info.get('uid'))+'/info?mod=pedit_more'
 
                 return [
-                    scrapy.Request(url=url_tmp, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_home
+                    scrapy.Request(url=url_tmp, meta={'cookiejar': 1}, cookies=self.my_cookies, dont_filter=True, callback=self.see_home
                                    )]
 
 
