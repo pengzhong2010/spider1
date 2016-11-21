@@ -75,12 +75,27 @@ class WebpconeSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
+        # print 'request.headers'
+        # print response.request.headers
         #
         # with open('webpage', 'ab') as f:
         #     f.write(response.body)
 
+        # return
+
         if not common.login_filter(self.error_file_dir, self.error_file, response.url):
             return
+        common.stay_cookie(self.name, response.request.headers.getlist('Cookie')[0])
+        cookies_list = response.request.headers.getlist('Cookie')[0].split('; ')
+
+        for i in cookies_list:
+            tmp = i.split('=')
+
+            k = tmp[0]
+
+            v = tmp[1]
+
+            self.my_cookies.setdefault(k, v)
 
         # response.xpath('')
         url_tmp = response.url
@@ -95,7 +110,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
             # print "next_url"
             # print url_fans
 
-            return [scrapy.Request(url=url_fans, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
+            return [scrapy.Request(url=url_fans, meta={'cookiejar': response.meta['cookiejar']}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
                                    )]
 
     def see_list(self, response):
@@ -108,13 +123,26 @@ class WebpconeSpider(scrapy.spiders.Spider):
         # print response.headers
         # print 'meta'
         # print response.meta
+        # print 'request.headers'
+        # print response.request.headers
         #
         # with open('fans_list', 'ab') as f:
         #     f.write(response.body)
+        # return
 
         if not common.login_filter(self.error_file_dir, self.error_file, response.url):
             return
         common.stay_cookie(self.name, response.request.headers.getlist('Cookie')[0])
+        cookies_list = response.request.headers.getlist('Cookie')[0].split('; ')
+
+        for i in cookies_list:
+            tmp = i.split('=')
+
+            k = tmp[0]
+
+            v = tmp[1]
+
+            self.my_cookies.setdefault(k, v)
 
         str1 = response.body
         str1 = str(str1)
@@ -152,7 +180,7 @@ class WebpconeSpider(scrapy.spiders.Spider):
         # print 'next_url'
         # print self.next_page
         time.sleep(2.3)
-        return [scrapy.Request(url=next_url, meta={'cookiejar': 0}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
+        return [scrapy.Request(url=next_url, meta={'cookiejar': response.meta['cookiejar']}, cookies=self.my_cookies, dont_filter=True, callback=self.see_list
                            )]
 
 
