@@ -47,7 +47,7 @@ class CommentallSpider(scrapy.spiders.Spider):
 
     def start_requests(self):
         self.shell_init()
-        cookies_list = conf1.MY_COOKIES.split('; ')
+        cookies_list = conf1.MY_COOKIES3.split('; ')
 
         for i in cookies_list:
             tmp = i.split('=')
