@@ -39,7 +39,7 @@ class CommentallSpider(scrapy.spiders.Spider):
     my_cookies = {}
     error_file_dir = ""
     error_file=''
-    appid = 1287792
+    appid = 2806796
 
     def shell_init(self):
         self.error_file_dir = conf1.error_file_dir
