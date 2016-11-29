@@ -26,7 +26,7 @@ class PapitubewebpconeSpider(webpcone_spider.WebpconeSpider):
     mysql_con = ''
     error_file_dir = ""
     error_file = ''
-    cookies_user = conf1.MY_COOKIES2
+    cookies_user = conf1.MY_COOKIES6
 
     my_headers = {}
     my_cookies = {}
