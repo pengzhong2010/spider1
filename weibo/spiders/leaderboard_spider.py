@@ -128,11 +128,16 @@ class LeaderboardSpider(scrapy.spiders.Spider):
         str1 = str1.replace('\\r\\n', '')
         str1 = str1.replace('\\n', '')
         str1 = str1.replace('\\t', '')
+
+        # with open('leaderbd1', 'wb') as f:
+        #     f.write(response.body)
+        # return
+
         list1 = Selector(text=str1).xpath('//script/text()').extract()
         for str_html in list1:
             tag = 'FM.view({"ns":"pl.content.weiboDetail.index","domid":"Pl_Official_WeiboDetail__77"'
             m4 = re.match(
-                r'.*FM.view\(\{\"ns\":\"pl\.content\.weiboDetail\.index\",\"domid\":\"Pl_Official_WeiboDetail__75\"(.*)',
+                r'.*FM.view\(\{\"ns\":\"pl\.content\.weiboDetail\.index\",\"domid\":\"Pl_Official_WeiboDetail__76\"(.*)',
                 str_html)
             if m4:
                 m2 = re.match(r'.*\"html\":\"(.*)', str_html)

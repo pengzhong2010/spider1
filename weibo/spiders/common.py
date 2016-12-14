@@ -28,6 +28,7 @@ def read_cookie(class_name_in, str_in):
 
 
 def rest(time_second_int):
+    print 'sleep'
     time.sleep(time_second_int)
 
 
