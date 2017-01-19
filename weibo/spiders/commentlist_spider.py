@@ -93,8 +93,9 @@ class CommentlistSpider(scrapy.spiders.Spider):
             #     r'.*FM.view\(\{\"ns\":\"pl\.content\.homeFeed\.index\",\"domid\":\"Pl_Official_MyProfileFeed__24\"(.*)',
             #     str_html)
             m4 = re.match(
-                r'.*FM.view\(\{\"ns\":\"pl\.content\.homeFeed\.index\",\"domid\":\"Pl_Official_MyProfileFeed__36\"(.*)',
+                r'.*FM.view\(\{\"ns\":\"pl\.content\.homeFeed\.index\",\"domid\":\"Pl_Official_MyProfileFeed__(.*)',
                 str_html)
+
             if m4:
                 m2 = re.match(r'.*\"html\":\"(.*)', str_html)
                 if m2:
