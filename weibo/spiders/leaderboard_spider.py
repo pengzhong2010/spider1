@@ -137,7 +137,7 @@ class LeaderboardSpider(scrapy.spiders.Spider):
         for str_html in list1:
             tag = 'FM.view({"ns":"pl.content.weiboDetail.index","domid":"Pl_Official_WeiboDetail__77"'
             m4 = re.match(
-                r'.*FM.view\(\{\"ns\":\"pl\.content\.weiboDetail\.index\",\"domid\":\"Pl_Official_WeiboDetail__76\"(.*)',
+                r'.*FM.view\(\{\"ns\":\"pl\.content\.weiboDetail\.index\",\"domid\":\"Pl_Official_WeiboDetail__(.*)',
                 str_html)
             if m4:
                 m2 = re.match(r'.*\"html\":\"(.*)', str_html)
@@ -203,72 +203,72 @@ class LeaderboardSpider(scrapy.spiders.Spider):
 
                             self.update_blog_info(self.blog_id, fl_forward_num, fl_comment_num, fl_like_num, day_int_now)
 
-            m4 = re.match(
-                r'.*FM.view\(\{\"ns\":\"pl\.content\.weiboDetail\.index\",\"domid\":\"Pl_Official_WeiboDetail__60\"(.*)',
-                str_html)
-            if m4:
-                m2 = re.match(r'.*\"html\":\"(.*)', str_html)
-                if m2:
-                    str2 = m2.groups()[0]
-                    str2 = str2.replace('\\', '')
-
-                    list3 = Selector(text=str2).xpath(
-                        '//ul[contains(@class, "WB_row_line WB_row_r4 clearfix S_line2")]')
-                    if list3:
-                        list4 = list3[0].xpath('li')
-                        if len(list4) == 4:
-                            fl_forward_num = 0
-                            list5 = list4[1].xpath(
-                                '//a[contains(@action-type, "fl_forward")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
-                            if len(list5) == 2:
-                                fl_forward = list5[1]
-                                fl_forward_text = fl_forward.xpath('text()').extract()
-                                if fl_forward_text:
-                                    fl_forward_num = int(fl_forward_text[0])
-
-                            fl_comment_num = 0
-                            list6 = list4[2].xpath(
-                                '//a[contains(@action-type, "fl_comment")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
-                            if len(list6) == 2:
-                                fl_comment = list6[1]
-                                fl_comment_text = fl_comment.xpath('text()').extract()
-                                if fl_comment_text:
-                                    fl_comment_num = int(fl_comment_text[0])
-
-                            # fl_like_num = 0
-                            # list7 = list4[3].xpath(
-                            #     '//a[contains(@action-type, "login")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]')
-                            # if len(list7) == 2:
-                            #     fl_like_list = list7[1].xpath('span/em')
-                            #     if len(fl_like_list) == 2:
-                            #         fl_like_text = fl_like_list[1].xpath('text()').extract()
-                            #     if fl_like_text:
-                            #         fl_like_num = int(fl_like_text[0])
-
-                            fl_like_num = 0
-                            fl_like_list = list4[3].xpath(
-                                '//a[contains(@action-type, "fl_like")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
-                            if len(fl_like_list) == 2:
-                                fl_like_text = fl_like_list[1].xpath('text()').extract()
-                                if fl_like_text:
-                                    fl_like_num = int(fl_like_text[0])
-                            else:
-                                list7 = list4[3].xpath(
-                                    '//a[contains(@action-type, "login")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]')
-                                if len(list7) == 2:
-                                    fl_like_list = list7[1].xpath('span/em')
-                                    if len(fl_like_list) == 2:
-                                        fl_like_text = fl_like_list[1].xpath('text()').extract()
-                                    if fl_like_text:
-                                        fl_like_num = int(fl_like_text[0])
-
-                            # print self.blog_id
-                            # print fl_forward_num
-                            # print fl_comment_num
-                            # print fl_like_num
-                            # print day_int_now
-
-                            self.update_blog_info(self.blog_id, fl_forward_num, fl_comment_num, fl_like_num, day_int_now)
+            # m4 = re.match(
+            #     r'.*FM.view\(\{\"ns\":\"pl\.content\.weiboDetail\.index\",\"domid\":\"Pl_Official_WeiboDetail__60\"(.*)',
+            #     str_html)
+            # if m4:
+            #     m2 = re.match(r'.*\"html\":\"(.*)', str_html)
+            #     if m2:
+            #         str2 = m2.groups()[0]
+            #         str2 = str2.replace('\\', '')
+            #
+            #         list3 = Selector(text=str2).xpath(
+            #             '//ul[contains(@class, "WB_row_line WB_row_r4 clearfix S_line2")]')
+            #         if list3:
+            #             list4 = list3[0].xpath('li')
+            #             if len(list4) == 4:
+            #                 fl_forward_num = 0
+            #                 list5 = list4[1].xpath(
+            #                     '//a[contains(@action-type, "fl_forward")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
+            #                 if len(list5) == 2:
+            #                     fl_forward = list5[1]
+            #                     fl_forward_text = fl_forward.xpath('text()').extract()
+            #                     if fl_forward_text:
+            #                         fl_forward_num = int(fl_forward_text[0])
+            #
+            #                 fl_comment_num = 0
+            #                 list6 = list4[2].xpath(
+            #                     '//a[contains(@action-type, "fl_comment")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
+            #                 if len(list6) == 2:
+            #                     fl_comment = list6[1]
+            #                     fl_comment_text = fl_comment.xpath('text()').extract()
+            #                     if fl_comment_text:
+            #                         fl_comment_num = int(fl_comment_text[0])
+            #
+            #                 # fl_like_num = 0
+            #                 # list7 = list4[3].xpath(
+            #                 #     '//a[contains(@action-type, "login")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]')
+            #                 # if len(list7) == 2:
+            #                 #     fl_like_list = list7[1].xpath('span/em')
+            #                 #     if len(fl_like_list) == 2:
+            #                 #         fl_like_text = fl_like_list[1].xpath('text()').extract()
+            #                 #     if fl_like_text:
+            #                 #         fl_like_num = int(fl_like_text[0])
+            #
+            #                 fl_like_num = 0
+            #                 fl_like_list = list4[3].xpath(
+            #                     '//a[contains(@action-type, "fl_like")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]/span/em')
+            #                 if len(fl_like_list) == 2:
+            #                     fl_like_text = fl_like_list[1].xpath('text()').extract()
+            #                     if fl_like_text:
+            #                         fl_like_num = int(fl_like_text[0])
+            #                 else:
+            #                     list7 = list4[3].xpath(
+            #                         '//a[contains(@action-type, "login")]/span[contains(@class, "pos")]/span[contains(@class, "line S_line1")]')
+            #                     if len(list7) == 2:
+            #                         fl_like_list = list7[1].xpath('span/em')
+            #                         if len(fl_like_list) == 2:
+            #                             fl_like_text = fl_like_list[1].xpath('text()').extract()
+            #                         if fl_like_text:
+            #                             fl_like_num = int(fl_like_text[0])
+            #
+            #                 # print self.blog_id
+            #                 # print fl_forward_num
+            #                 # print fl_comment_num
+            #                 # print fl_like_num
+            #                 # print day_int_now
+            #
+            #                 self.update_blog_info(self.blog_id, fl_forward_num, fl_comment_num, fl_like_num, day_int_now)
         # return
 
 
